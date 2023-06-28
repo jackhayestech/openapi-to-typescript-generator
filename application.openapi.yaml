@@ -1,0 +1,202 @@
+openapi: 3.0.1
+info:
+  title: Notes backend api
+  version: 1.0.0
+paths:
+  /event:
+    post:
+      parameters:
+        - in: query
+          name: userUuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+      requestBody:
+        $ref: '#/components/requestBodies/CreateEvent'
+      responses:
+        '200':
+          description: Event was successfully created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/EventResponseData'
+        'default':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+  # /event/{eventUuid}:
+  #   get:
+  #     parameters:
+  #       - in: path
+  #         name: eventUuid
+  #         schema:
+  #           type: string
+  #           format: uuid
+  #         required: true
+  #         description: The events uuid the request is trying to retrieve
+  #     description: Returns a created event.
+  #     responses:
+  #       '200':
+  #         description: Event was found.
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 data:
+  #                   type: object
+  #                   $ref: '#/components/schemas/EventResponseData'
+  #       'default':
+  #         description: Internal server error
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/ServerErrorResponse'
+  # /user-events/{userUuid}:
+  #   get:
+  #     parameters:
+  #       - in: path
+  #         name: userUuid
+  #         schema:
+  #           type: string
+  #           format: uuid
+  #         required: true
+  #         description: The user uuid the request is trying to retrieve
+  #     description: Returns a list of events the user owns
+  #     responses:
+  #       '200':
+  #         description: User list was found
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 data:
+  #                   type: object
+  #                   $ref: '#/components/schemas/UserEventsResponseData'
+  #       'default':
+  #         description: Internal server error
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/ServerErrorResponse'
+  
+components:
+  requestBodies:
+    CreateEvent:
+      description: Creates a new event.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - 'data'
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/CreateEventData'
+  schemas:
+    ServerErrorResponse:
+      additionalProperties: false
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServerError'
+    ServerError:
+      additionalProperties: false
+      type: object
+      properties:
+        id:
+          type: string
+        code:
+          type: string
+        status:
+          type: number
+        title:
+          type: string
+        detail:
+          type: string
+        meta:
+          type: object
+    CreateEventData:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+        dateTime:
+          type: string
+        location:
+          type: string
+        description:
+          type: string
+      required:
+        - name
+    EventResponseData:
+      type: object
+      $ref: '#/components/schemas/Event'
+    UserEventsResponseData:
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventNoOwner'
+    Event:
+      allOf:
+        - $ref: '#/components/schemas/CreateEventData'
+        - type: object
+          additionalProperties: false
+          properties:
+              uuid:
+                type: string
+                format: uuid
+              name:
+                type: string
+              dateTime:
+                type: string
+                nullable: true
+              location:
+                type: string
+                nullable: true
+              description:
+                type: string
+                nullable: true
+              owners:
+                type: array
+                items:
+                  type: string
+      required:
+        - owners
+        - name
+        - uuid
+    EventNoOwner:
+      type: object
+      additionalProperties: false
+      properties:
+          uuid:
+            type: string
+            format: uuid
+          name:
+            type: string
+          dateTime:
+            type: string
+            nullable: true
+          location:
+            type: string
+            nullable: true
+          description:
+            type: string
+            nullable: true
+      required:
+        - name
+        - uuid  
+  

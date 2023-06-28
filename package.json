@@ -1,0 +1,30 @@
+{
+	"name": "openapi-to-typescript",
+	"version": "1.0.0",
+	"description": "Converts openapi to typescript",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "npx tsc",
+		"start": "npx tsc && node ./dist/index.js"
+	},
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"@types/node": "^20.3.2",
+		"@typescript-eslint/eslint-plugin": "^5.46.1",
+		"@typescript-eslint/parser": "^5.46.1",
+		"eslint": "^8.29.0",
+		"eslint-config-prettier": "^8.8.0",
+		"eslint-import-resolver-typescript": "^3.5.5",
+		"eslint-plugin-import": "^2.27.5",
+		"eslint-plugin-prettier": "^4.2.1",
+		"eslint-plugin-unused-imports": "^2.0.0",
+		"prettier": "^2.8.1",
+		"typescript": "^5.1.3"
+	},
+	"dependencies": {
+		"fs": "^0.0.1-security",
+		"yaml": "^2.3.1"
+	}
+}

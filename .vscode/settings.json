@@ -1,0 +1,10 @@
+{
+  "editor.formatOnSave": true,
+  "prettier.enable": true,
+  "prettier.configPath": ".prettierrc.json",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.organizeImports": true,
+    "source.addMissingImports": true
+  }
+}
