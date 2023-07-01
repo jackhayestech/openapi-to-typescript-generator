@@ -23,7 +23,8 @@ export interface ObjectSchema {
 export interface ArraySchemaOneType {
 	type: SchemaArray
 	items: {
-		type: PrimitiveSchema
+		type?: PrimitiveSchema
+		$ref?: string
 	}
 }
 

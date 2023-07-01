@@ -8,10 +8,6 @@ paths:
       operationId: CreateEvent
       parameters:
         - $ref: '#/components/parameters/UserUuid'
-        - in: query
-          name: testParam
-          schema:
-            type: number
       requestBody:
         $ref: '#/components/requestBodies/CreateEvent'
       responses:
@@ -105,7 +101,7 @@ components:
         owners:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/UserUuid'
       required:
         - owners
         - uuid

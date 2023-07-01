@@ -21,22 +21,27 @@ export const generateInterface = (name: string, schema: ObjectSchema): string =>
 export const generateInterfaceKey = (key: string, value: Primitive, optional: string): string =>
 	`${indent}${key}${optional}: ${value}${newLine}`
 
-export const generateArrayInterfaceKey = (key: string, schema: ArraySchema, optional: string): string => {
-	let items = ''
+export const generateArrayInterfaceKey = (key: string, { items }: ArraySchema, optional: string): string => {
+	let item = ''
 
-	if ('type' in schema.items) {
-		items = `${schema.items.type}[]`
-	} else {
-		const anyOf = schema.items.anyOf
+	if ('type' in items) {
+		item = `${items.type}[]`
+	} else if ('$ref' in items) {
+		const ref = items.$ref as string
+		item += `${getComponentNameFromRef(ref)}[]`
+	} else if ('anyOf' in items) {
+		const anyOf = items.anyOf
 		anyOf.forEach((type, i) => {
-			items += ` ${type.type}[]`
+			item += ` ${type.type}[]`
 			if (i !== anyOf.length - 1) {
-				items += ' | '
+				item += ' | '
 			}
 		})
+	} else {
+		throw new Error('Array type not supported')
 	}
 
-	return `${indent}${key}${optional}: ${items}${newLine}`
+	return `${indent}${key}${optional}: ${item}${newLine}`
 }
 
 export const generateType = (key: string, value: Primitive): string =>
