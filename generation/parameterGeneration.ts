@@ -1,4 +1,4 @@
-import { capitalizeFirstLetter, generateType, indent, newLine } from '../common'
+import { capitalizeFirstLetter, generateType, getComponentNameFromRef, indent, newLine } from '../common'
 import { Parameter } from '../types/component.types'
 
 interface ParamDetail {
@@ -11,15 +11,24 @@ interface Params {
 	[key: string]: ParamDetail[]
 }
 
-export const generateParameters = (operationId: string, parameters?: Parameter[], componentParams?: any) => {
+export const generateParameters = (
+	operationId: string,
+	imports: string[],
+	parameters?: Parameter[],
+	componentParameters?: {
+		[key: string]: Parameter
+	},
+): string => {
 	if (!parameters) return ''
 
 	const params: Params = {}
 	let paramString = ''
 
 	parameters.forEach((param) => {
-		if (param['$ref']) {
-			// TODO
+		if (param.$ref) {
+			const name = getComponentNameFromRef(param.$ref)
+			imports.push(name)
+			generateParameterObjectFromRef(params, name, componentParameters)
 		} else {
 			paramString += generateParamTypescript(param)
 			generateParameterObject(params, param)
@@ -56,7 +65,7 @@ const generateParameterKeys = (params: ParamDetail[]) => {
 	return paramKeys
 }
 
-const generateParameterObject = (params: Params, param: Parameter): Params => {
+const generateParameterObject = (params: Params, param: Parameter) => {
 	if (!params[param.in]) {
 		params[param.in] = []
 	}
@@ -65,7 +74,34 @@ const generateParameterObject = (params: Params, param: Parameter): Params => {
 		name: param.name,
 		interface: capitalizeFirstLetter(param.name),
 	})
-	return params
+}
+
+const generateParameterObjectFromRef = (
+	params: Params,
+	name: string,
+	componentParameters?: {
+		[key: string]: Parameter
+	},
+) => {
+	if (!componentParameters) {
+		throw new Error('Component params expected')
+	}
+
+	if (!(name in componentParameters)) {
+		throw new Error('Expected param not in component params')
+	}
+
+	const param = componentParameters[name]
+
+	if (!params[param.in]) {
+		params[param.in] = []
+	}
+
+	params[param.in].push({
+		required: param.required,
+		name: param.name,
+		interface: name,
+	})
 }
 
 const generateParamTypescript = ({ name, schema }: Parameter): string => {

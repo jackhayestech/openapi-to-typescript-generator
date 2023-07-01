@@ -1,6 +1,7 @@
 import fs, { writeFile } from 'fs'
 import { parse } from 'yaml'
 
+import { generateImportString } from './common'
 import { generateParameters } from './generation/parameterGeneration'
 import { generateRequestBody } from './generation/requestBodyGeneration'
 import { generateSchemas } from './generation/schemaGeneration'
@@ -33,9 +34,14 @@ const generatePath = (methods: Methods, components: any) => {
 const generateEndpoint = ({ parameters, requestBody, responses, operationId }: Endpoint, components: Components) => {
 	if (!operationId) throw new Error('Operation Id required.')
 
+	const imports: string[] = []
 	let endpointFile = ''
-	endpointFile += generateParameters(operationId, parameters, components.parameters)
+
+	endpointFile += generateParameters(operationId, imports, parameters, components.parameters)
 	endpointFile += generateRequestBody(operationId, requestBody, components)
+
+	endpointFile = `${generateImportString(imports)}${endpointFile}`
+
 	writeFile(`./generated/${operationId}.ts`, endpointFile, () => {})
 }
 

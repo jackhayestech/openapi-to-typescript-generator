@@ -51,5 +51,20 @@ export const capitalizeFirstLetter = (string: string) => string.charAt(0).toUppe
 
 export const getComponentNameFromRef = (ref: string): string => ref.split('/').slice(-1)[0]
 
+export const generateImportString = (imports: string[]): string => {
+	let importString = 'import {'
+
+	imports.forEach((imp, i) => {
+		importString += ` ${imp}`
+		if (i !== imports.length - 1) {
+			importString += ','
+		}
+	})
+
+	importString += ` } from './schemas.types'${newLine}${newLine}`
+
+	return importString
+}
+
 export const newLine = '\n'
 export const indent = '\t'

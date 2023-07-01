@@ -30,8 +30,7 @@ const generateSchema = (name: string, schema: Schema): string => {
 		case 'string':
 			return `export ${generateType(name, schema.type)}`
 		case 'array':
-			console.log(schema)
-			return ''
+			throw new Error('need to make error')
 	}
 }
 
