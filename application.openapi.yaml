@@ -5,90 +5,29 @@ info:
 paths:
   /event:
     post:
+      operationId: CreateEvent
       parameters:
+        - $ref: '#/components/parameters/UserUuid'
         - in: query
-          name: userUuid
+          name: testParam
           schema:
-            type: string
-            format: uuid
-          required: true
+            type: number
       requestBody:
         $ref: '#/components/requestBodies/CreateEvent'
       responses:
         '200':
-          description: Event was successfully created.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    $ref: '#/components/schemas/EventResponseData'
+          $ref: '#/components/responses/SingleEventResponse'
         'default':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServerErrorResponse'
-  # /event/{eventUuid}:
-  #   get:
-  #     parameters:
-  #       - in: path
-  #         name: eventUuid
-  #         schema:
-  #           type: string
-  #           format: uuid
-  #         required: true
-  #         description: The events uuid the request is trying to retrieve
-  #     description: Returns a created event.
-  #     responses:
-  #       '200':
-  #         description: Event was found.
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: object
-  #               properties:
-  #                 data:
-  #                   type: object
-  #                   $ref: '#/components/schemas/EventResponseData'
-  #       'default':
-  #         description: Internal server error
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/ServerErrorResponse'
-  # /user-events/{userUuid}:
-  #   get:
-  #     parameters:
-  #       - in: path
-  #         name: userUuid
-  #         schema:
-  #           type: string
-  #           format: uuid
-  #         required: true
-  #         description: The user uuid the request is trying to retrieve
-  #     description: Returns a list of events the user owns
-  #     responses:
-  #       '200':
-  #         description: User list was found
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: object
-  #               properties:
-  #                 data:
-  #                   type: object
-  #                   $ref: '#/components/schemas/UserEventsResponseData'
-  #       'default':
-  #         description: Internal server error
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/ServerErrorResponse'
+          $ref: '#/components/responses/ServerErrorResponse'
   
 components:
+  parameters:
+    UserUuid:
+      in: path
+      name: userUuid
+      schema:
+        $ref: '#/components/parameters/UserUuid'
+      required: true
   requestBodies:
     CreateEvent:
       description: Creates a new event.
@@ -102,15 +41,30 @@ components:
               data:
                 type: object
                 $ref: '#/components/schemas/CreateEventData'
-  schemas:
+  responses:
     ServerErrorResponse:
-      additionalProperties: false
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ServerError'
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            additionalProperties: false
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServerError'
+    SingleEventResponse:
+      description: Event was successfully created.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/Event'
+  schemas:
     ServerError:
       additionalProperties: false
       type: object
@@ -141,62 +95,24 @@ components:
           type: string
       required:
         - name
-    EventResponseData:
-      type: object
-      $ref: '#/components/schemas/Event'
-    UserEventsResponseData:
-      properties:
-        events:
-          type: array
-          items:
-            $ref: '#/components/schemas/EventNoOwner'
-    Event:
-      allOf:
-        - $ref: '#/components/schemas/CreateEventData'
-        - type: object
-          additionalProperties: false
-          properties:
-              uuid:
-                type: string
-                format: uuid
-              name:
-                type: string
-              dateTime:
-                type: string
-                nullable: true
-              location:
-                type: string
-                nullable: true
-              description:
-                type: string
-                nullable: true
-              owners:
-                type: array
-                items:
-                  type: string
-      required:
-        - owners
-        - name
-        - uuid
-    EventNoOwner:
+    EventDbData:
       type: object
       additionalProperties: false
       properties:
-          uuid:
+        uuid:
+          type: string
+          format: uuid
+        owners:
+          type: array
+          items:
             type: string
-            format: uuid
-          name:
-            type: string
-          dateTime:
-            type: string
-            nullable: true
-          location:
-            type: string
-            nullable: true
-          description:
-            type: string
-            nullable: true
       required:
-        - name
-        - uuid  
-  
+        - owners
+        - uuid
+    Event:
+      allOf:
+        - $ref: '#/components/schemas/CreateEventData'
+        - $ref: '#/components/schemas/EventDbData'
+    UserUuid:
+      type: string
+      format: uuid

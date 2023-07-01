@@ -1,43 +1,45 @@
 import fs, { writeFile } from 'fs'
 import { parse } from 'yaml'
 
-import { generateParameters } from './parameterGeneration'
-import { Endpoint, Methods, Paths } from './types'
+import { generateParameters } from './generation/parameterGeneration'
+import { generateRequestBody } from './generation/requestBodyGeneration'
+import { generateSchemas } from './generation/schemaGeneration'
+import { Components } from './types/component.types'
+import { Endpoint, Methods, Paths } from './types/types'
 
-const generateTypescript = (paths: Paths) => {
+const generateTypescript = (paths: Paths, components: Components) => {
+	generateSchemas(components.schemas)
+
 	for (const key in paths) {
-		generatePath(paths[key])
+		generatePath(paths[key], components)
 	}
 }
 
-const generatePath = (methods: Methods) => {
+const generatePath = (methods: Methods, components: any) => {
 	if (methods.get) {
-		generateEndpoint(methods.get)
+		generateEndpoint(methods.get, components)
 	}
 	if (methods.post) {
-		generateEndpoint(methods.post)
+		generateEndpoint(methods.post, components)
 	}
 	if (methods.delete) {
-		generateEndpoint(methods.delete)
+		generateEndpoint(methods.delete, components)
 	}
 	if (methods.put) {
-		generateEndpoint(methods.put)
+		generateEndpoint(methods.put, components)
 	}
 }
 
-const generateEndpoint = ({ parameters, requestBody, responses }: Endpoint) => {
+const generateEndpoint = ({ parameters, requestBody, responses, operationId }: Endpoint, components: Components) => {
+	if (!operationId) throw new Error('Operation Id required.')
+
 	let endpointFile = ''
-	endpointFile = generateParameters(endpointFile, parameters)
-	// console.log(requestBody)
-	// console.log(responses)
-	console.log(endpointFile)
-	writeFile('./generated/gen.ts', endpointFile, () => {})
+	endpointFile += generateParameters(operationId, parameters, components.parameters)
+	endpointFile += generateRequestBody(operationId, requestBody, components)
+	writeFile(`./generated/${operationId}.ts`, endpointFile, () => {})
 }
 
 const file = fs.readFileSync('./application.openapi.yaml', 'utf8')
-const {
-	paths,
-	components: { requestBodies, schemas },
-} = parse(file)
+const { paths, components } = parse(file)
 
-generateTypescript(paths)
+generateTypescript(paths, components)
