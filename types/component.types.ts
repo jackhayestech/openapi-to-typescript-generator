@@ -52,5 +52,5 @@ export interface Parameter {
 	required: boolean
 	description: string
 	schema: Schema
-	['$ref']: string
+	$ref?: string
 }

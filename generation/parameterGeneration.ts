@@ -1,4 +1,11 @@
-import { capitalizeFirstLetter, generateType, getComponentNameFromRef, indent, newLine } from '../common'
+import {
+	capitalizeFirstLetter,
+	generateImportString,
+	generateType,
+	getComponentNameFromRef,
+	indent,
+	newLine,
+} from '../common'
 import { Parameter } from '../types/component.types'
 
 interface ParamDetail {
@@ -22,6 +29,7 @@ export const generateParameters = (
 	if (!parameters) return ''
 
 	const params: Params = {}
+	const localImports: string[] = []
 	let paramString = ''
 
 	parameters.forEach((param) => {
@@ -31,11 +39,13 @@ export const generateParameters = (
 			generateParameterObjectFromRef(params, name, componentParameters)
 		} else {
 			paramString += generateParamTypescript(param)
-			generateParameterObject(params, param)
+			generateParameterObject(params, param, localImports)
 		}
 	})
 
 	paramString += generateParameterInterface(operationId, params)
+
+	paramString = `${generateImportString(localImports, 'schemas')}${paramString}`
 
 	return paramString
 }
@@ -65,10 +75,15 @@ const generateParameterKeys = (params: ParamDetail[]) => {
 	return paramKeys
 }
 
-const generateParameterObject = (params: Params, param: Parameter) => {
+const generateParameterObject = (params: Params, param: Parameter, localImports: string[]) => {
 	if (!params[param.in]) {
 		params[param.in] = []
 	}
+
+	if ('$ref' in param.schema) {
+		localImports.push(getComponentNameFromRef(param.schema.$ref as string))
+	}
+
 	params[param.in].push({
 		required: param.required,
 		name: param.name,
@@ -105,7 +120,8 @@ const generateParameterObjectFromRef = (
 }
 
 const generateParamTypescript = ({ name, schema }: Parameter): string => {
+	if ('$ref' in schema) return ''
 	if ('type' in schema) return `export ${generateType(name, schema.type)}${newLine}`
 
-	throw new Error('Parameter all of not supported')
+	throw new Error('Parameter allof not supported')
 }

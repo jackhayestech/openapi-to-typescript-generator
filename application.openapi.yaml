@@ -22,8 +22,7 @@ paths:
         - in: path
           name: eventUuid
           schema:
-            type: string
-            format: uuid
+            $ref: '#/components/schemas/EventUuid'
           required: true
           description: The events uuid the request is trying to retrieve
       description: Returns a created event.
@@ -127,5 +126,8 @@ components:
         - $ref: '#/components/schemas/CreateEventData'
         - $ref: '#/components/schemas/EventDbData'
     UserUuid:
+      type: string
+      format: uuid
+    EventUuid:
       type: string
       format: uuid
