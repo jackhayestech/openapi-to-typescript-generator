@@ -15,6 +15,23 @@ paths:
           $ref: '#/components/responses/SingleEventResponse'
         'default':
           $ref: '#/components/responses/ServerErrorResponse'
+  /event/{eventUuid}:
+    get:
+      operationId: GetEvent
+      parameters:
+        - in: path
+          name: eventUuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: The events uuid the request is trying to retrieve
+      description: Returns a created event.
+      responses:
+        '200':
+          $ref: '#/components/responses/SingleEventResponse'
+        'default':
+          $ref: '#/components/responses/ServerErrorResponse'
   
 components:
   parameters:
