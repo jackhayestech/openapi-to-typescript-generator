@@ -38,7 +38,7 @@ const generateEndpoint = ({ parameters, requestBody, responses, operationId }: E
 	let endpointFile = ''
 
 	endpointFile += generateParameters(operationId, imports, parameters, components.parameters)
-	endpointFile += generateRequestBody(operationId, requestBody, components)
+	endpointFile += generateRequestBody(operationId, imports, requestBody, components)
 
 	endpointFile = `${generateImportString(imports)}${endpointFile}`
 

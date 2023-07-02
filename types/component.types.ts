@@ -28,7 +28,7 @@ export interface RequestBody {
 }
 
 export interface RequestBodyContent {
-	'application/json': any
+	'application/json': Parameter
 }
 
 export interface Parameter {

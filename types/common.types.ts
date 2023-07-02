@@ -15,9 +15,10 @@ export interface PrimitiveSchema {
 export interface ObjectSchema {
 	type: SchemaObject
 	required?: string[]
-	properties: {
+	properties?: {
 		[key: string]: BasicSchema | ArraySchema
 	}
+	$ref?: {}
 }
 
 export interface ArraySchemaOneType {

@@ -1,6 +1,6 @@
 import { ArraySchema, ObjectSchema, Primitive } from './types/common.types'
 
-export const generateInterface = (name: string, schema: ObjectSchema): string => {
+export const generateInterface = (name: string, schema: ObjectSchema, imports?: string[]): string => {
 	let interfaceString = `interface ${name}{${newLine}`
 
 	for (const key in schema.properties) {
@@ -8,6 +8,8 @@ export const generateInterface = (name: string, schema: ObjectSchema): string =>
 
 		if (schema.properties[key].type === 'array') {
 			interfaceString += generateArrayInterfaceKey(key, schema.properties[key] as ArraySchema, optional)
+		} else if (schema.properties[key].type === 'object') {
+			interfaceString += generateObjectInterfaceKey(key, schema.properties[key] as ObjectSchema, optional, imports)
 		} else {
 			interfaceString += generateInterfaceKey(key, schema.properties[key].type, optional)
 		}
@@ -42,6 +44,22 @@ export const generateArrayInterfaceKey = (key: string, { items }: ArraySchema, o
 	}
 
 	return `${indent}${key}${optional}: ${item}${newLine}`
+}
+
+export const generateObjectInterfaceKey = (key: string, schema: ObjectSchema, optional: string, imports?: string[]) => {
+	let value = ''
+
+	if (schema?.$ref) {
+		const ref = schema.$ref as string
+		value = getComponentNameFromRef(ref)
+		if (imports) {
+			imports.push(value)
+		}
+	} else if (!schema.$ref && !schema.properties && schema.type === 'object') {
+		value = 'any'
+	}
+
+	return `${indent}${key}${optional}: ${value}${newLine}`
 }
 
 export const generateType = (key: string, value: Primitive): string =>
