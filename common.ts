@@ -93,5 +93,8 @@ export const generateImportString = (imports: string[], fileName: string): strin
 	return importString
 }
 
+export const generateExportLine = (fileName: string, asString = '') =>
+	`export * ${asString} from './${fileName}'${newLine}`
+
 export const newLine = '\n'
 export const indent = '\t'

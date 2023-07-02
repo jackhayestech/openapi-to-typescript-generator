@@ -1,9 +1,11 @@
 import { writeFile } from 'fs'
-import { generateImportString, generateInterface } from '../common'
+import { generateExportLine, generateImportString, generateInterface } from '../common'
 import { ReqResponse, Responses } from '../types/component.types'
 
-export const generateResponseComponents = (responses?: Responses) => {
-	if (!responses) return
+const fileName = 'responses.types'
+
+export const generateResponseComponents = (responses?: Responses): string => {
+	if (!responses) return ''
 
 	const imports: string[] = []
 	let fileString = ''
@@ -18,7 +20,9 @@ export const generateResponseComponents = (responses?: Responses) => {
 
 	fileString = `${generateImportString(imports, 'schemas')}${fileString}`
 
-	writeFile(`./generated/responses.types.ts`, fileString, () => {})
+	writeFile(`./generated/${fileName}.ts`, fileString, () => {})
+
+	return generateExportLine(fileName)
 }
 
 const generateResponse = (key: string, response: ReqResponse, imports: string[]): string => {

@@ -1,9 +1,11 @@
 import { writeFile } from 'fs'
-import { generateInterface, generateType, getComponentNameFromRef, newLine } from '../common'
+import { generateExportLine, generateInterface, generateType, getComponentNameFromRef, newLine } from '../common'
 import { AllOfSchema, Schema } from '../types/common.types'
 
-export const generateSchemas = (schemas?: { [key: string]: Schema }) => {
-	if (!schemas) return
+const fileName = 'schemas.types'
+
+export const generateSchemas = (schemas?: { [key: string]: Schema }): string => {
+	if (!schemas) ''
 
 	let fileString = ''
 	let schema
@@ -15,7 +17,8 @@ export const generateSchemas = (schemas?: { [key: string]: Schema }) => {
 		}
 	}
 
-	writeFile(`./generated/schemas.types.ts`, fileString, () => {})
+	writeFile(`./generated/${fileName}.ts`, fileString, () => {})
+	return generateExportLine(fileName)
 }
 
 const generateSchema = (name: string, schema: Schema): string => {

@@ -1,7 +1,7 @@
 import fs, { writeFile } from 'fs'
 import { parse } from 'yaml'
 
-import { generateImportString } from './common'
+import { generateExportLine, generateImportString } from './common'
 import { generateParameters } from './generation/parameterGeneration'
 import { generateRequestBody } from './generation/requestBodyGeneration'
 import { generateResponseComponents } from './generation/responseComponentGeneration'
@@ -11,30 +11,39 @@ import { Components } from './types/component.types'
 import { Endpoint, Methods, Paths } from './types/types'
 
 const generateTypescript = (paths: Paths, components: Components) => {
-	generateSchemas(components.schemas)
-	generateResponseComponents(components.responses)
+	let indexFileString = ''
+
+	indexFileString += generateSchemas(components.schemas)
+	indexFileString += generateResponseComponents(components.responses)
 
 	for (const key in paths) {
-		generatePath(paths[key], components)
+		indexFileString += generatePath(paths[key], components)
 	}
+
+	writeFile('./generated/index.ts', indexFileString, () => {})
 }
 
-const generatePath = (methods: Methods, components: any) => {
+const generatePath = (methods: Methods, components: Components): string => {
 	if (methods.get) {
-		generateEndpoint(methods.get, components)
+		return generateEndpoint(methods.get, components)
 	}
 	if (methods.post) {
-		generateEndpoint(methods.post, components)
+		return generateEndpoint(methods.post, components)
 	}
 	if (methods.delete) {
-		generateEndpoint(methods.delete, components)
+		return generateEndpoint(methods.delete, components)
 	}
 	if (methods.put) {
-		generateEndpoint(methods.put, components)
+		return generateEndpoint(methods.put, components)
 	}
+
+	return ''
 }
 
-const generateEndpoint = ({ parameters, requestBody, responses, operationId }: Endpoint, components: Components) => {
+const generateEndpoint = (
+	{ parameters, requestBody, responses, operationId }: Endpoint,
+	components: Components,
+): string => {
 	if (!operationId) throw new Error('Operation Id required.')
 
 	const componentImports: string[] = []
@@ -50,6 +59,7 @@ const generateEndpoint = ({ parameters, requestBody, responses, operationId }: E
 	endpointFile = `${generateImportString(responsesImports, 'responses')}${endpointFile}`
 
 	writeFile(`./generated/${operationId}.ts`, endpointFile, () => {})
+	return generateExportLine(operationId, ` as ${operationId}Request`)
 }
 
 const file = fs.readFileSync('./application.openapi.yaml', 'utf8')
