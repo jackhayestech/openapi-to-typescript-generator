@@ -11,9 +11,17 @@ export interface Methods {
 	delete?: Endpoint
 }
 
+export interface Response {
+	$ref?: string
+}
+
+export interface Responses {
+	[key: string]: Response
+}
+
 export interface Endpoint {
 	parameters?: Parameter[]
 	requestBody?: RequestBody
-	responses?: any
+	responses?: Responses
 	operationId?: string
 }

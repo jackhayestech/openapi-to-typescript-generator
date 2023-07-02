@@ -78,7 +78,7 @@ export const capitalizeFirstLetter = (string: string) => string.charAt(0).toUppe
 
 export const getComponentNameFromRef = (ref: string): string => ref.split('/').slice(-1)[0]
 
-export const generateImportString = (imports: string[]): string => {
+export const generateImportString = (imports: string[], fileName: string): string => {
 	let importString = 'import {'
 
 	imports.forEach((imp, i) => {
@@ -88,7 +88,7 @@ export const generateImportString = (imports: string[]): string => {
 		}
 	})
 
-	importString += ` } from './schemas.types'${newLine}${newLine}`
+	importString += ` } from './${fileName}.types'${newLine}${newLine}`
 
 	return importString
 }

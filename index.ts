@@ -6,9 +6,9 @@ import { generateParameters } from './generation/parameterGeneration'
 import { generateRequestBody } from './generation/requestBodyGeneration'
 import { generateResponseComponents } from './generation/responseComponentGeneration'
 import { generateResponses } from './generation/responseGeneration'
+import { generateSchemas } from './generation/schemaGeneration'
 import { Components } from './types/component.types'
 import { Endpoint, Methods, Paths } from './types/types'
-import { generateSchemas } from './generation/schemaGeneration'
 
 const generateTypescript = (paths: Paths, components: Components) => {
 	generateSchemas(components.schemas)
@@ -37,14 +37,17 @@ const generatePath = (methods: Methods, components: any) => {
 const generateEndpoint = ({ parameters, requestBody, responses, operationId }: Endpoint, components: Components) => {
 	if (!operationId) throw new Error('Operation Id required.')
 
-	const imports: string[] = []
+	const componentImports: string[] = []
+	const responsesImports: string[] = []
+
 	let endpointFile = ''
 
-	endpointFile += generateParameters(operationId, imports, parameters, components.parameters)
-	endpointFile += generateRequestBody(operationId, imports, requestBody, components)
-	generateResponses(responses)
+	endpointFile += generateParameters(operationId, componentImports, parameters, components.parameters)
+	endpointFile += generateRequestBody(operationId, componentImports, requestBody, components)
+	endpointFile += generateResponses(responsesImports, responses)
 
-	endpointFile = `${generateImportString(imports)}${endpointFile}`
+	endpointFile = `${generateImportString(componentImports, 'schemas')}${endpointFile}`
+	endpointFile = `${generateImportString(responsesImports, 'responses')}${endpointFile}`
 
 	writeFile(`./generated/${operationId}.ts`, endpointFile, () => {})
 }
