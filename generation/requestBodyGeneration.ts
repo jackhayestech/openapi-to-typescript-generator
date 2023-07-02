@@ -4,10 +4,14 @@ import { Components, RequestBodies, RequestBody } from '../types/component.types
 export const generateRequestBody = (
 	operationId: string,
 	imports: string[],
-	requestBody: RequestBody,
-	components: Components,
+	requestBody?: RequestBody,
+	components?: Components,
 ): string => {
-	if (requestBody['$ref']) return getComponent(operationId, imports, requestBody['$ref'], components.requestBodies)
+	if (!requestBody) {
+		return ''
+	}
+
+	if (requestBody['$ref']) return getComponent(operationId, imports, requestBody['$ref'], components?.requestBodies)
 
 	throw new Error('Non ref request bodies not supported')
 }

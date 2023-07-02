@@ -4,12 +4,15 @@ import { parse } from 'yaml'
 import { generateImportString } from './common'
 import { generateParameters } from './generation/parameterGeneration'
 import { generateRequestBody } from './generation/requestBodyGeneration'
-import { generateSchemas } from './generation/schemaGeneration'
+import { generateResponseComponents } from './generation/responseComponentGeneration'
+import { generateResponses } from './generation/responseGeneration'
 import { Components } from './types/component.types'
 import { Endpoint, Methods, Paths } from './types/types'
+import { generateSchemas } from './generation/schemaGeneration'
 
 const generateTypescript = (paths: Paths, components: Components) => {
 	generateSchemas(components.schemas)
+	generateResponseComponents(components.responses)
 
 	for (const key in paths) {
 		generatePath(paths[key], components)
@@ -39,6 +42,7 @@ const generateEndpoint = ({ parameters, requestBody, responses, operationId }: E
 
 	endpointFile += generateParameters(operationId, imports, parameters, components.parameters)
 	endpointFile += generateRequestBody(operationId, imports, requestBody, components)
+	generateResponses(responses)
 
 	endpointFile = `${generateImportString(imports)}${endpointFile}`
 

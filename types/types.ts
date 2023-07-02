@@ -1,4 +1,4 @@
-import { Parameter } from './component.types'
+import { Parameter, RequestBody } from './component.types'
 
 export interface Paths {
 	[key: string]: Methods
@@ -13,7 +13,7 @@ export interface Methods {
 
 export interface Endpoint {
 	parameters?: Parameter[]
-	requestBody?: any
+	requestBody?: RequestBody
 	responses?: any
 	operationId?: string
 }
