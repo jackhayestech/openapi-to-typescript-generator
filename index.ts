@@ -58,7 +58,11 @@ const generateEndpoint = (
 	endpointFile = `${generateImportString(componentImports, 'schemas')}${endpointFile}`
 	endpointFile = `${generateImportString(responsesImports, 'responses')}${endpointFile}`
 
-	writeFile(`./generated/${operationId}.ts`, endpointFile, () => {})
+	const path = './generated'
+	if (!fs.existsSync(path)) {
+		fs.mkdirSync(path)
+	}
+	writeFile(`${path}/${operationId}.ts`, endpointFile, () => {})
 	return generateExportLine(operationId, ` as ${operationId}Request`)
 }
 

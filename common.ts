@@ -37,7 +37,7 @@ export const generateArrayInterfaceKey = (
 		const ref = items.$ref as string
 		const name = getComponentNameFromRef(ref)
 		item += `${name}[]`
-		if (imports) {
+		if (imports && !imports.includes(name)) {
 			imports.push(name)
 		}
 	} else if ('anyOf' in items) {
@@ -61,7 +61,7 @@ export const generateObjectInterfaceKey = (key: string, schema: ObjectSchema, op
 	if (schema?.$ref) {
 		const ref = schema.$ref as string
 		value = getComponentNameFromRef(ref)
-		if (imports) {
+		if (imports && !imports.includes(value)) {
 			imports.push(value)
 		}
 	} else if (!schema.$ref && !schema.properties && schema.type === 'object') {

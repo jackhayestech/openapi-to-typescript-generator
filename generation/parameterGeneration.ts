@@ -34,9 +34,15 @@ export const generateParameters = (
 
 	parameters.forEach((param) => {
 		if (param.$ref) {
-			const name = getComponentNameFromRef(param.$ref)
-			imports.push(name)
-			generateParameterObjectFromRef(params, name, componentParameters)
+			let name = getComponentNameFromRef(param.$ref)
+			if (componentParameters?.[name]) {
+				name = `${capitalizeFirstLetter(componentParameters[name].name)} as ${getComponentNameFromRef(param.$ref)}`
+			}
+
+			if (!imports.includes(name)) {
+				imports.push(name)
+			}
+			generateParameterObjectFromRef(params, getComponentNameFromRef(param.$ref), componentParameters)
 		} else {
 			paramString += generateParamTypescript(param)
 			generateParameterObject(params, param, localImports)
@@ -81,7 +87,10 @@ const generateParameterObject = (params: Params, param: Parameter, localImports:
 	}
 
 	if ('$ref' in param.schema) {
-		localImports.push(getComponentNameFromRef(param.schema.$ref as string))
+		const name = getComponentNameFromRef(param.schema.$ref as string)
+		if (!localImports.includes(name)) {
+			localImports.push(name)
+		}
 	}
 
 	params[param.in].push({

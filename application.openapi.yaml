@@ -7,7 +7,7 @@ paths:
     post:
       operationId: CreateEvent
       parameters:
-        - $ref: '#/components/parameters/UserUuid'
+        - $ref: '#/components/parameters/QueryUserUuid'
       requestBody:
         $ref: '#/components/requestBodies/CreateEvent'
       responses:
@@ -19,27 +19,45 @@ paths:
     get:
       operationId: GetEvent
       parameters:
-        - in: path
-          name: eventUuid
-          schema:
-            $ref: '#/components/schemas/EventUuid'
-          required: true
-          description: The events uuid the request is trying to retrieve
+        - $ref: '#/components/parameters/EventUuid'
       description: Returns a created event.
       responses:
         '200':
           $ref: '#/components/responses/SingleEventResponse'
         'default':
           $ref: '#/components/responses/ServerErrorResponse'
-  
+  /user-events/{userUuid}:
+    get:
+      operationId: GetUserEvents
+      parameters:
+        - $ref: '#/components/parameters/PathUserUuid'
+      description: Returns a list of events the user owns
+      responses:
+        '200':
+          $ref: '#/components/responses/MultipleEventResponse'
+        'default':
+          $ref: '#/components/responses/ServerErrorResponse'
 components:
   parameters:
-    UserUuid:
+    QueryUserUuid:
+      in: query
+      name: userUuid
+      schema:
+        $ref: '#/components/schemas/UserUuid'
+      required: true
+    PathUserUuid:
       in: path
       name: userUuid
       schema:
-        $ref: '#/components/parameters/UserUuid'
+        $ref: '#/components/schemas/UserUuid'
       required: true
+    EventUuid:
+      in: path
+      name: eventUuid
+      schema:
+        $ref: '#/components/schemas/EventUuid'
+      required: true
+      description: The events uuid the request is trying to retrieve
   requestBodies:
     CreateEvent:
       description: Creates a new event.
@@ -67,7 +85,7 @@ components:
                 items:
                   $ref: '#/components/schemas/ServerError'
     SingleEventResponse:
-      description: Event was successfully created.
+      description: Returns a single event
       content:
         application/json:
           schema:
@@ -76,6 +94,17 @@ components:
               data:
                 type: object
                 $ref: '#/components/schemas/Event'
+    MultipleEventResponse:
+      description: Returns multiple events
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
   schemas:
     ServerError:
       additionalProperties: false
