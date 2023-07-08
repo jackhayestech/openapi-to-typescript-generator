@@ -1,6 +1,6 @@
 {
-	"name": "openapi-to-typescript",
-	"version": "1.0.0",
+	"name": "openapi-to-typescript-generator",
+	"version": "1.0.4",
 	"description": "Converts openapi to typescript",
 	"main": "index.js",
 	"scripts": {
@@ -26,5 +26,11 @@
 	"dependencies": {
 		"fs": "^0.0.1-security",
 		"yaml": "^2.3.1"
-	}
+	},
+	"bin": {
+		"generate": "dist/index.js"
+	},
+	"files": [
+		"dist"
+	]
 }

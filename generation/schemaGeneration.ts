@@ -17,7 +17,9 @@ export const generateSchemas = (schemas?: { [key: string]: Schema }): string => 
 		}
 	}
 
-	writeFile(`./generated/${fileName}.ts`, fileString, () => {})
+	writeFile(`./generated/${fileName}.ts`, fileString, (error) => {
+		if (error) console.log(error)
+	})
 	return generateExportLine(fileName)
 }
 
