@@ -4,7 +4,7 @@ import { ReqResponse, Responses } from '../types/component.types'
 
 const fileName = 'responses.types'
 
-export const generateResponseComponents = (responses?: Responses): string => {
+export const generateResponseComponents = (output: string, responses?: Responses): string => {
 	if (!responses) return ''
 
 	const imports: string[] = []
@@ -20,7 +20,7 @@ export const generateResponseComponents = (responses?: Responses): string => {
 
 	fileString = `${generateImportString(imports, 'schemas')}${fileString}`
 
-	writeFile(`./generated/${fileName}.ts`, fileString, () => {})
+	writeFile(`${output}/${fileName}.ts`, fileString, () => {})
 
 	return generateExportLine(fileName)
 }

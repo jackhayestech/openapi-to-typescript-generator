@@ -9,37 +9,35 @@ import { generateResponseComponents } from './responseComponentGeneration'
 import { generateResponses } from './responseGeneration'
 import { generateSchemas } from './schemaGeneration'
 
-const path = 'generated'
-
-export const generateTypescript = (paths: Paths, components: Components) => {
-	if (!fs.existsSync(path)) {
-		fs.mkdirSync(path)
+export const generateTypescript = (paths: Paths, components: Components, output: string) => {
+	if (!fs.existsSync(output)) {
+		fs.mkdirSync(output)
 	}
 
 	let indexFileString = ''
 
-	indexFileString += generateSchemas(components.schemas)
-	indexFileString += generateResponseComponents(components.responses)
+	indexFileString += generateSchemas(output, components.schemas)
+	indexFileString += generateResponseComponents(output, components.responses)
 
 	for (const key in paths) {
-		indexFileString += generatePath(paths[key], components)
+		indexFileString += generatePath(paths[key], components, output)
 	}
 
-	writeFile(`./${path}/index.ts`, indexFileString, () => {})
+	writeFile(`${output}/index.ts`, indexFileString, () => {})
 }
 
-const generatePath = (methods: Methods, components: Components): string => {
+const generatePath = (methods: Methods, components: Components, output: string): string => {
 	if (methods.get) {
-		return generateEndpoint(methods.get, components)
+		return generateEndpoint(methods.get, components, output)
 	}
 	if (methods.post) {
-		return generateEndpoint(methods.post, components)
+		return generateEndpoint(methods.post, components, output)
 	}
 	if (methods.delete) {
-		return generateEndpoint(methods.delete, components)
+		return generateEndpoint(methods.delete, components, output)
 	}
 	if (methods.put) {
-		return generateEndpoint(methods.put, components)
+		return generateEndpoint(methods.put, components, output)
 	}
 
 	return ''
@@ -48,6 +46,7 @@ const generatePath = (methods: Methods, components: Components): string => {
 const generateEndpoint = (
 	{ parameters, requestBody, responses, operationId }: Endpoint,
 	components: Components,
+	output: string,
 ): string => {
 	if (!operationId) throw new Error('Operation Id required.')
 
@@ -63,6 +62,6 @@ const generateEndpoint = (
 	endpointFile = `${generateImportString(componentImports, 'schemas')}${endpointFile}`
 	endpointFile = `${generateImportString(responsesImports, 'responses')}${endpointFile}`
 
-	writeFile(`./${path}/${operationId}.ts`, endpointFile, () => {})
+	writeFile(`${output}/${operationId}.ts`, endpointFile, () => {})
 	return generateExportLine(operationId, ` as ${operationId}Request`)
 }

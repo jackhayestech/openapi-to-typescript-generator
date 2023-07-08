@@ -4,7 +4,7 @@ import { AllOfSchema, Schema } from '../types/common.types'
 
 const fileName = 'schemas.types'
 
-export const generateSchemas = (schemas?: { [key: string]: Schema }): string => {
+export const generateSchemas = (output: string, schemas?: { [key: string]: Schema }): string => {
 	if (!schemas) ''
 
 	let fileString = ''
@@ -17,7 +17,7 @@ export const generateSchemas = (schemas?: { [key: string]: Schema }): string => 
 		}
 	}
 
-	writeFile(`./generated/${fileName}.ts`, fileString, (error) => {
+	writeFile(`${output}/${fileName}.ts`, fileString, (error) => {
 		if (error) console.log(error)
 	})
 	return generateExportLine(fileName)
