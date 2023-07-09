@@ -90,7 +90,7 @@ export const generateImportString = (imports: string[], fileName: string): strin
 		}
 	})
 
-	importString += ` } from './${fileName}.types'${newLine}${newLine}`
+	importString += ` } from '${fileName}'${newLine}${newLine}`
 
 	return importString
 }

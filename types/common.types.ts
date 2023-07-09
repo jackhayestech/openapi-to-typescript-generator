@@ -44,3 +44,5 @@ export interface AllOfSchema {
 
 export type BasicSchema = PrimitiveSchema | ObjectSchema | ArraySchema
 export type Schema = AllOfSchema | BasicSchema
+
+export type TypedRequestKeys = { body: boolean; params: boolean }

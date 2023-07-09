@@ -19,15 +19,12 @@ interface Params {
 }
 
 export const generateParameters = (
-	operationId: string,
 	imports: string[],
-	parameters?: Parameter[],
+	parameters: Parameter[],
 	componentParameters?: {
 		[key: string]: Parameter
 	},
 ): string => {
-	if (!parameters) return ''
-
 	const params: Params = {}
 	const localImports: string[] = []
 	let paramString = ''
@@ -49,19 +46,19 @@ export const generateParameters = (
 		}
 	})
 
-	paramString += generateParameterInterface(operationId, params)
+	paramString += generateParameterInterface(params)
 
-	paramString = `${generateImportString(localImports, 'schemas')}${paramString}`
+	paramString = `${generateImportString(localImports, './schemas.types')}${paramString}`
 
 	return paramString
 }
 
-const generateParameterInterface = (operationId: string, params: Params): string => {
-	let paramString = `export interface ${operationId}Parameters {${newLine}`
+const generateParameterInterface = (params: Params): string => {
+	let paramString = `interface Parameters {${newLine}`
 	for (const key in params) {
 		paramString = `${paramString}${generateParameterType(key, params[key])}${newLine}`
 	}
-	paramString = `${paramString}}${newLine}`
+	paramString = `${paramString}}${newLine}${newLine}`
 	return paramString
 }
 

@@ -18,7 +18,7 @@ export const generateResponseComponents = (output: string, responses?: Responses
 		}
 	}
 
-	fileString = `${generateImportString(imports, 'schemas')}${fileString}`
+	fileString = `${generateImportString(imports, './schemas.types')}${fileString}`
 
 	writeFile(`${output}/${fileName}.ts`, fileString, () => {})
 
