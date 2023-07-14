@@ -11,11 +11,15 @@ const getComponent = (imports: string[], path: string, requestBodies?: RequestBo
 	if (!requestBodies) throw new Error('Missing request body component')
 
 	const componentName = getComponentNameFromRef(path)
-	const requestBody = requestBodies[componentName].content['application/json'].schema
+	const requestBody = requestBodies?.[componentName]?.content?.['application/json'].schema
 
-	if ('properties' in requestBody) {
-		return `${generateInterface(`RequestBody`, requestBody, imports)}`
+	if (!requestBody) {
+		throw new Error('Missing request body')
 	}
 
-	throw new Error('Request body without parameters not supported')
+	if (!('properties' in requestBody)) {
+		throw new Error('Request body without parameters not supported')
+	}
+
+	return `${generateInterface(`RequestBody`, requestBody, imports)}`
 }

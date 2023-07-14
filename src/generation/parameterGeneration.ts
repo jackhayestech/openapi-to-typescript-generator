@@ -6,7 +6,7 @@ import {
 	indent,
 	newLine,
 } from '../common'
-import { Parameter } from '../types/component.types'
+import { Parameter, Parameters } from '../types/component.types'
 
 interface ParamDetail {
 	required: boolean
@@ -20,7 +20,7 @@ interface Params {
 
 export const generateParameters = (
 	imports: string[],
-	parameters: Parameter[],
+	parameters: Parameters,
 	componentParameters?: {
 		[key: string]: Parameter
 	},
@@ -30,7 +30,10 @@ export const generateParameters = (
 	let paramString = ''
 
 	parameters.forEach((param) => {
-		if (param.$ref) {
+		if ('in' in param) {
+			paramString += generateParamTypescript(param)
+			generateParameterObject(params, param, localImports)
+		} else {
 			let name = getComponentNameFromRef(param.$ref)
 			if (componentParameters?.[name]) {
 				name = `${capitalizeFirstLetter(componentParameters[name].name)} as ${getComponentNameFromRef(param.$ref)}`
@@ -40,9 +43,6 @@ export const generateParameters = (
 				imports.push(name)
 			}
 			generateParameterObjectFromRef(params, getComponentNameFromRef(param.$ref), componentParameters)
-		} else {
-			paramString += generateParamTypescript(param)
-			generateParameterObject(params, param, localImports)
 		}
 	})
 

@@ -10,6 +10,7 @@ type SchemaArray = 'array'
 
 export interface PrimitiveSchema {
 	type: SchemaString | SchemaNumber
+	format?: string
 }
 
 export interface ObjectSchema {
@@ -19,6 +20,7 @@ export interface ObjectSchema {
 		[key: string]: BasicSchema | ArraySchema
 	}
 	$ref?: {}
+	additionalProperties?: boolean
 }
 
 export interface ArraySchemaOneType {
@@ -39,10 +41,14 @@ export interface ArraySchemaMultipleTypes {
 export type ArraySchema = ArraySchemaMultipleTypes | ArraySchemaOneType
 
 export interface AllOfSchema {
-	allOf: { $ref: string }[]
+	allOf: Ref[]
+}
+
+export interface Ref {
+	$ref: string
 }
 
 export type BasicSchema = PrimitiveSchema | ObjectSchema | ArraySchema
-export type Schema = AllOfSchema | BasicSchema
+export type Schema = AllOfSchema | BasicSchema | Ref
 
 export type TypedRequestKeys = { body: boolean; params: boolean }

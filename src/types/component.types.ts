@@ -1,4 +1,4 @@
-import { ObjectSchema, Schema } from './common.types'
+import { ObjectSchema, Ref, Schema } from './common.types'
 
 type ParamType = 'query' | 'path'
 
@@ -20,6 +20,7 @@ export interface Responses {
 }
 
 export interface ReqResponse {
+	description?: string
 	content: {
 		'application/json': {
 			schema: ObjectSchema
@@ -27,9 +28,9 @@ export interface ReqResponse {
 	}
 }
 
-export interface ReqResponseBodyContent {}
-
-export interface RequestBody {
+export type RequestBody = {
+	description?: string
+	content?: RequestBodyContent
 	$ref?: string
 }
 
@@ -37,20 +38,17 @@ export interface RequestBodies {
 	[key: string]: RequestBody
 }
 
-export interface RequestBody {
-	description?: string
-	content: RequestBodyContent
+export interface RequestBodyContent {
+	'application/json': { schema: Schema }
 }
 
-export interface RequestBodyContent {
-	'application/json': Parameter
-}
+export type Parameters = (Parameter | Ref)[]
 
 export interface Parameter {
 	in: ParamType
 	name: string
 	required: boolean
-	description: string
+	description?: string
 	schema: Schema
 	$ref?: string
 }

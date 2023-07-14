@@ -28,6 +28,10 @@ const generateSchema = (name: string, schema: Schema): string => {
 		return allOfSchemaGenerate(name, schema)
 	}
 
+	if (!('type' in schema)) {
+		throw new Error('Should not have gotten here')
+	}
+
 	switch (schema.type) {
 		case 'object':
 			return `export ${generateInterface(name, schema)}`
@@ -35,7 +39,7 @@ const generateSchema = (name: string, schema: Schema): string => {
 		case 'string':
 			return `export ${generateType(name, schema.type)}`
 		case 'array':
-			throw new Error('need to make error')
+			throw new Error('need to support array')
 	}
 }
 
