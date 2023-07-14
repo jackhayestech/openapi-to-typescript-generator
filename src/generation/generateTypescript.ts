@@ -4,12 +4,12 @@ import { generateExportLine, generateImportString } from '../common'
 import { TypedRequestKeys } from '../types/common.types'
 import { Components } from '../types/component.types'
 import { Endpoint, Methods, Paths } from '../types/types'
+import { generateTypedRequest } from './generateTypedRequest'
 import { generateParameters } from './parameterGeneration'
 import { generateRequestBody } from './requestBodyGeneration'
 import { generateResponseComponents } from './responseComponentGeneration'
 import { generateResponses } from './responseGeneration'
 import { generateSchemas } from './schemaGeneration'
-import { generateTypedRequest } from './generateTypedRequest'
 
 export const generateTypescript = (paths: Paths, components: Components, output: string) => {
 	if (!fs.existsSync(output)) {
