@@ -1,3 +1,4 @@
+import { writeFile } from 'fs'
 import { ArraySchema, ObjectSchema, Primitive } from './types/common.types'
 
 export const generateInterface = (name: string, schema: ObjectSchema, imports?: string[]): string => {
@@ -100,3 +101,9 @@ export const generateExportLine = (fileName: string, asString = '') =>
 
 export const newLine = '\n'
 export const indent = '\t'
+
+export const createSchemaFile = (fileName: string, fileString: string) => {
+	writeFile(fileName, fileString, (error) => {
+		if (error) console.log(error)
+	})
+}

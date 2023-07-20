@@ -1,5 +1,4 @@
-import { writeFile } from 'fs'
-import { generateExportLine, generateImportString, generateInterface } from '../common'
+import { createSchemaFile, generateExportLine, generateImportString, generateInterface } from '../common'
 import { ReqResponse, Responses } from '../types/component.types'
 
 const fileName = 'responses.types'
@@ -20,7 +19,7 @@ export const generateResponseComponents = (output: string, responses?: Responses
 
 	fileString = `${generateImportString(imports, './schemas.types')}${fileString}`
 
-	writeFile(`${output}/${fileName}.ts`, fileString, () => {})
+	createSchemaFile(`${output}/${fileName}.ts`, fileString)
 
 	return generateExportLine(fileName)
 }

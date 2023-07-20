@@ -1,59 +1,8 @@
-import {
-	capitalizeFirstLetter,
-	generateImportString,
-	generateType,
-	getComponentNameFromRef,
-	indent,
-	newLine,
-} from '../common'
-import { Parameter, Parameters } from '../types/component.types'
+import { capitalizeFirstLetter, generateType, getComponentNameFromRef, indent, newLine } from '../common'
+import { Params, ParamDetail } from '../types/common.types'
+import { Parameter } from '../types/component.types'
 
-interface ParamDetail {
-	required: boolean
-	name: string
-	interface: string
-}
-
-interface Params {
-	[key: string]: ParamDetail[]
-}
-
-export const generateParameters = (
-	imports: string[],
-	parameters: Parameters,
-	componentParameters?: {
-		[key: string]: Parameter
-	},
-): string => {
-	const params: Params = {}
-	const localImports: string[] = []
-	let paramString = ''
-
-	parameters.forEach((param) => {
-		if ('in' in param) {
-			paramString += generateParamTypescript(param)
-			generateParameterObject(params, param, localImports)
-		} else {
-			let name = getComponentNameFromRef(param.$ref)
-			if (componentParameters?.[name]) {
-				name = `${capitalizeFirstLetter(componentParameters[name].name)} as ${getComponentNameFromRef(param.$ref)}`
-			}
-
-			if (!imports.includes(name)) {
-				imports.push(name)
-			}
-			generateParameterObjectFromRef(params, getComponentNameFromRef(param.$ref), componentParameters)
-		}
-	})
-
-	paramString += generateParameterInterface(params)
-
-	paramString = `${generateImportString(localImports, './schemas.types')}${paramString}`
-
-	return paramString
-}
-
-const generateParameterInterface = (params: Params): string => {
+export const generateParameterInterface = (params: Params): string => {
 	let paramString = `interface Parameters {${newLine}`
 	for (const key in params) {
 		paramString = `${paramString}${generateParameterType(key, params[key])}${newLine}`
@@ -69,7 +18,7 @@ const generateParameterType = (type: string, params: ParamDetail[]): string => {
 	return parameterType
 }
 
-const generateParameterKeys = (params: ParamDetail[]) => {
+export const generateParameterKeys = (params: ParamDetail[]) => {
 	let paramKeys = ''
 	params.forEach((param) => {
 		const optional = param.required ? '' : '?'
@@ -78,7 +27,7 @@ const generateParameterKeys = (params: ParamDetail[]) => {
 	return paramKeys
 }
 
-const generateParameterObject = (params: Params, param: Parameter, localImports: string[]) => {
+export const generateParameterObject = (params: Params, param: Parameter, localImports: string[]) => {
 	if (!params[param.in]) {
 		params[param.in] = []
 	}
@@ -97,7 +46,7 @@ const generateParameterObject = (params: Params, param: Parameter, localImports:
 	})
 }
 
-const generateParameterObjectFromRef = (
+export const generateParameterObjectFromRef = (
 	params: Params,
 	name: string,
 	componentParameters?: {
@@ -125,7 +74,7 @@ const generateParameterObjectFromRef = (
 	})
 }
 
-const generateParamTypescript = ({ name, schema }: Parameter): string => {
+export const generateParamTypescript = ({ name, schema }: Parameter): string => {
 	if ('$ref' in schema) return ''
 	if ('type' in schema) return `export ${generateType(name, schema.type)}${newLine}`
 

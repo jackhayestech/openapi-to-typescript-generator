@@ -14,9 +14,7 @@ export const generateResponses = (imports: string[], responses?: Responses) => {
 }
 
 const generateResponse = (imports: string[], key: string, response: Response) => {
-	if (!response.$ref) {
-		throw new Error('Non ref responses not supported')
-	}
+	if (!response.$ref) throw new Error('Non ref responses not supported')
 
 	const name = getComponentNameFromRef(response.$ref)
 	imports.push(name)

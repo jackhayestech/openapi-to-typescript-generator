@@ -1,5 +1,11 @@
-import { writeFile } from 'fs'
-import { generateExportLine, generateInterface, generateType, getComponentNameFromRef, newLine } from '../common'
+import {
+	createSchemaFile,
+	generateExportLine,
+	generateInterface,
+	generateType,
+	getComponentNameFromRef,
+	newLine,
+} from '../common'
 import { AllOfSchema, Schema } from '../types/common.types'
 
 const fileName = 'schemas.types'
@@ -17,9 +23,8 @@ export const generateSchemas = (output: string, schemas?: { [key: string]: Schem
 		}
 	}
 
-	writeFile(`${output}/${fileName}.ts`, fileString, (error) => {
-		if (error) console.log(error)
-	})
+	createSchemaFile(`${output}/${fileName}.ts`, fileString)
+
 	return generateExportLine(fileName)
 }
 
