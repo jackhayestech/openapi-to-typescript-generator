@@ -4,8 +4,8 @@ import { createSchemaFile } from '../common'
 import { Components } from '../types/component.types'
 import { Endpoint, Methods, Paths } from '../types/types'
 import { GenerateEndpoint } from './generateEndpoint'
-import { generateResponseComponents } from './responseComponentGeneration'
-import { generateSchemas } from './schemaGeneration'
+import { ResponseComponent } from './responseComponentGeneration'
+import { SchemaGeneration } from './schemaGeneration'
 
 export class GenerateTypescript {
 	indexFile: string = ''
@@ -18,8 +18,11 @@ export class GenerateTypescript {
 
 		this.createOutputDirectory()
 
-		this.addToIndexFile(generateSchemas(this.outputFolderName, components.schemas))
-		this.addToIndexFile(generateResponseComponents(this.outputFolderName, components.responses))
+		const schemaExport = new SchemaGeneration(this.outputFolderName, components.schemas).getExport()
+		this.addToIndexFile(schemaExport)
+
+		const responseComponentsExport = new ResponseComponent(this.outputFolderName, components.responses).getExport()
+		this.addToIndexFile(responseComponentsExport)
 
 		for (const key in paths) {
 			this.generatePath(paths[key])

@@ -1,7 +1,8 @@
 import { generateInterfaceKey, getComponentNameFromRef, newLine } from '../common'
 import { Response, Responses } from '../types/types'
+import { ImportCollection } from './importCollection'
 
-export const generateEndpointResponses = (imports: string[], responses?: Responses) => {
+export const generateEndpointResponses = (imports: ImportCollection, responses?: Responses) => {
 	let responsesString = `export interface Responses {${newLine}`
 
 	for (const key in responses) {
@@ -13,11 +14,11 @@ export const generateEndpointResponses = (imports: string[], responses?: Respons
 	return responsesString
 }
 
-const generateResponse = (imports: string[], key: string, response: Response) => {
-	if (!response.$ref) throw new Error('Non ref responses not supported')
+const generateResponse = (imports: ImportCollection, key: string, { $ref }: Response) => {
+	if (!$ref) throw new Error('Non ref responses not supported')
 
-	const name = getComponentNameFromRef(response.$ref)
-	imports.push(name)
+	const name = getComponentNameFromRef($ref)
+	imports.add(name)
 
 	return generateInterfaceKey(key, name, '')
 }

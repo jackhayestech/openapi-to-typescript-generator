@@ -1,9 +1,10 @@
 import { indent, newLine } from '../common'
 import { TypedRequestKeys } from '../types/common.types'
+import { ImportCollection } from './importCollection'
 
 export const generateExpressJsTypedRequest = (
 	typedRequestKeys: TypedRequestKeys,
-	typedRequestImports: string[],
+	typedRequestImports: ImportCollection,
 ): string => {
 	if (!typedRequestKeys.body && !typedRequestKeys.params) return ''
 
@@ -13,7 +14,7 @@ export const generateExpressJsTypedRequest = (
 	let request = `export type Request = TypedRequest<`
 
 	if (typedRequestKeys.params) {
-		typedRequestImports.push('Query')
+		typedRequestImports.add('Query')
 		typedRequest += `T extends Query`
 		typedRequestBody += `${indent}query: T${newLine}`
 		request += `Parameters['query']`

@@ -2,29 +2,38 @@ import { createSchemaFile, generateExportLine, generateInterface } from '../comm
 import { ReqResponse, Responses } from '../types/component.types'
 import { ImportCollection } from './importCollection'
 
-const fileName = 'responses.types'
+export class ResponseComponent {
+	fileName = 'responses.types'
+	output: string
+	imports = new ImportCollection('./schemas.types')
 
-export const generateResponseComponents = (output: string, responses?: Responses): string => {
-	if (!responses) return ''
+	constructor(output: string, responses?: Responses) {
+		this.output = output
 
-	const imports = new ImportCollection('./schemas.types')
-	let fileString = ''
-	let response
-
-	for (const key in responses) {
-		response = generateResponse(key, responses[key], imports)
-		if (response) {
-			fileString += response
-		}
+		this.generateFile(responses)
 	}
 
-	fileString = `${imports.generateImportString()}${fileString}`
+	private generateFile(responses?: Responses) {
+		if (!responses) return
 
-	createSchemaFile(`${output}/${fileName}.ts`, fileString)
+		let fileString = ''
 
-	return generateExportLine(fileName)
-}
+		for (const key in responses) {
+			fileString += this.generateResponse(key, responses[key])
+		}
 
-const generateResponse = (key: string, response: ReqResponse, imports: ImportCollection): string => {
-	return `export ${generateInterface(key, response.content['application/json'].schema, imports)}`
+		fileString = `${this.imports.generateImportString()}${fileString}`
+
+		createSchemaFile(`${this.output}/${this.fileName}.ts`, fileString)
+	}
+
+	private generateResponse = (key: string, response: ReqResponse): string => {
+		const schema = response.content['application/json'].schema
+
+		return `export ${generateInterface(key, schema, this.imports)}`
+	}
+
+	getExport() {
+		return generateExportLine(this.fileName)
+	}
 }

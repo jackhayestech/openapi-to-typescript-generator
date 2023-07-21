@@ -6,63 +6,71 @@ import {
 	getComponentNameFromRef,
 	newLine,
 } from '../common'
-import { AllOfSchema, Schema } from '../types/common.types'
+import { AllOfSchema, Schema, Schemas } from '../types/common.types'
 
-const fileName = 'schemas.types'
+export class SchemaGeneration {
+	output: string
+	fileString = ''
+	fileName = 'schemas.types'
 
-export const generateSchemas = (output: string, schemas?: { [key: string]: Schema }): string => {
-	if (!schemas) ''
+	constructor(output: string, schemas?: Schemas) {
+		this.output = output
+		this.generate(schemas)
+	}
 
-	let fileString = ''
-	let schema
+	private generate(schemas?: Schemas) {
+		if (!schemas) ''
 
-	for (const key in schemas) {
-		schema = generateSchema(key, schemas[key])
-		if (schema) {
-			fileString += schema
+		for (const key in schemas) {
+			this.generateSchema(key, schemas[key])
+		}
+
+		createSchemaFile(`${this.output}/${this.fileName}.ts`, this.fileString)
+	}
+
+	private generateSchema(name: string, schema: Schema) {
+		if ('allOf' in schema) {
+			this.allOfSchemaGenerate(name, schema)
+			return
+		}
+
+		if (!('type' in schema)) {
+			throw new Error('Should not have gotten here')
+		}
+
+		switch (schema.type) {
+			case 'object':
+				this.fileString += `export ${generateInterface(name, schema)}`
+				return
+			case 'number':
+			case 'string':
+				this.fileString += `export ${generateType(name, schema.type)}`
+				return
+			case 'array':
+				throw new Error('need to support array')
 		}
 	}
 
-	createSchemaFile(`${output}/${fileName}.ts`, fileString)
+	allOfSchemaGenerate = (name: string, { allOf }: AllOfSchema) => {
+		let schemaString = `export type ${name} = `
 
-	return generateExportLine(fileName)
-}
-
-const generateSchema = (name: string, schema: Schema): string => {
-	if ('allOf' in schema) {
-		return allOfSchemaGenerate(name, schema)
-	}
-
-	if (!('type' in schema)) {
-		throw new Error('Should not have gotten here')
-	}
-
-	switch (schema.type) {
-		case 'object':
-			return `export ${generateInterface(name, schema)}`
-		case 'number':
-		case 'string':
-			return `export ${generateType(name, schema.type)}`
-		case 'array':
-			throw new Error('need to support array')
-	}
-}
-
-const allOfSchemaGenerate = (name: string, { allOf }: AllOfSchema): string => {
-	let schemaString = `export type ${name} = `
-
-	allOf.forEach((ref, i) => {
-		if ('$ref' in ref) {
-			schemaString += `${getComponentNameFromRef(ref.$ref)}`
-			if (i !== allOf.length - 1) {
-				schemaString += ' | '
+		allOf.forEach(({ $ref }, i) => {
+			if ($ref) {
+				schemaString += `${getComponentNameFromRef($ref)}`
+				if (i !== allOf.length - 1) {
+					schemaString += ' | '
+				}
+			} else {
+				throw new Error('Inline interface not supported for all of')
 			}
-		} else {
-			throw new Error('Inline interface not supported for all of')
-		}
-	})
+		})
 
-	schemaString += `${newLine}${newLine}`
+		schemaString += `${newLine}${newLine}`
 
-	return schemaString
+		this.fileString += schemaString
+	}
+
+	getExport() {
+		return generateExportLine(this.fileName)
+	}
 }

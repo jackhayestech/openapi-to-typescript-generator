@@ -21,7 +21,7 @@ import { generateEndpointResponses } from './responseGeneration'
 export class GenerateEndpoint {
 	components: Components
 	operationId: string
-	endpointFile = new EndpointFile()
+	file = new EndpointFile()
 	typedRequest: TypedRequestKeys = { body: false, params: false }
 
 	constructor(
@@ -33,15 +33,15 @@ export class GenerateEndpoint {
 
 		this.components = components
 		this.operationId = operationId
+		const { responsesImports, typedRequestImports } = this.file
 
 		this.generateParameters(parameters)
 		this.generateRequestBody(requestBody)
-		this.endpointFile.responsesString = generateEndpointResponses(this.endpointFile.responsesImports.imports, responses)
-		this.endpointFile.expressJsTypedRequest = generateExpressJsTypedRequest(
-			this.typedRequest,
-			this.endpointFile.typedRequestImports.imports,
-		)
-		this.endpointFile.createEndpointFile(outputFolderName, this.operationId)
+
+		this.file.responsesString = generateEndpointResponses(responsesImports, responses)
+		this.file.expressJsTypedRequest = generateExpressJsTypedRequest(this.typedRequest, typedRequestImports)
+
+		this.file.createEndpointFile(outputFolderName, this.operationId)
 	}
 
 	getExportLine(): string {
@@ -69,7 +69,7 @@ export class GenerateEndpoint {
 		paramString += generateParameterInterface(convertedParameters)
 		paramString = `${generateImportString(localImports, './schemas.types')}${paramString}`
 
-		this.endpointFile.paramString = paramString
+		this.file.paramString = paramString
 	}
 
 	private generateParameterFromRef(convertedParameters: Params, { $ref }: Ref) {
@@ -80,7 +80,7 @@ export class GenerateEndpoint {
 			name = `${capitalizeFirstLetter(this.components.parameters[name].name)} as ${unmodifiedName}`
 		}
 
-		this.endpointFile.componentImports.add(name)
+		this.file.componentImports.add(name)
 
 		generateParameterObjectFromRef(convertedParameters, unmodifiedName, this.components.parameters)
 	}
@@ -98,7 +98,7 @@ export class GenerateEndpoint {
 		if (!requestBodySchema) throw new Error('Missing request body')
 		if (!('properties' in requestBodySchema)) throw new Error('Request body without parameters not supported')
 
-		const bodyString = `${generateInterface(`RequestBody`, requestBodySchema, this.endpointFile.componentImports)}`
-		this.endpointFile.requestBodyString = bodyString
+		const bodyString = `${generateInterface(`RequestBody`, requestBodySchema, this.file.componentImports)}`
+		this.file.requestBodyString = bodyString
 	}
 }

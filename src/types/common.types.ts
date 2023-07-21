@@ -50,6 +50,7 @@ export interface Ref {
 
 export type BasicSchema = PrimitiveSchema | ObjectSchema | ArraySchema
 export type Schema = AllOfSchema | BasicSchema | Ref
+export type Schemas = { [key: string]: Schema }
 
 export type TypedRequestKeys = { body: boolean; params: boolean }
 
