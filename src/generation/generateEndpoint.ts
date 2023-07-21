@@ -1,6 +1,5 @@
 import {
 	capitalizeFirstLetter,
-	createSchemaFile,
 	generateExportLine,
 	generateImportString,
 	generateInterface,
@@ -8,23 +7,21 @@ import {
 } from '../common'
 import { Params, Ref, TypedRequestKeys } from '../types/common.types'
 import { Components, Parameters, RequestBody } from '../types/component.types'
-import { Endpoint, Responses } from '../types/types'
-import { generateTypedRequest } from './generateTypedRequest'
+import { Endpoint } from '../types/types'
+import { EndpointFile } from './endpointFile'
+import { generateExpressJsTypedRequest } from './generateTypedRequest'
 import {
 	generateParamTypescript,
 	generateParameterInterface,
 	generateParameterObject,
 	generateParameterObjectFromRef,
 } from './parameterGeneration'
-import { generateResponses } from './responseGeneration'
+import { generateEndpointResponses } from './responseGeneration'
 
 export class GenerateEndpoint {
 	components: Components
 	operationId: string
-	endpointFile: string = ''
-	componentImports: string[] = []
-	responsesImports: string[] = []
-	typedRequestImports: string[] = []
+	endpointFile = new EndpointFile()
 	typedRequest: TypedRequestKeys = { body: false, params: false }
 
 	constructor(
@@ -39,30 +36,16 @@ export class GenerateEndpoint {
 
 		this.generateParameters(parameters)
 		this.generateRequestBody(requestBody)
-		this.createEndpointFile(outputFolderName, responses)
+		this.endpointFile.responsesString = generateEndpointResponses(this.endpointFile.responsesImports.imports, responses)
+		this.endpointFile.expressJsTypedRequest = generateExpressJsTypedRequest(
+			this.typedRequest,
+			this.endpointFile.typedRequestImports.imports,
+		)
+		this.endpointFile.createEndpointFile(outputFolderName, this.operationId)
 	}
 
 	getExportLine(): string {
 		return generateExportLine(this.operationId, ` as ${this.operationId}`)
-	}
-
-	addToEndpointFile(str: string) {
-		this.endpointFile += str
-	}
-
-	addToStartOfEndpointFile(str: string) {
-		this.endpointFile = `${str}${this.endpointFile}`
-	}
-
-	private createEndpointFile(outputFolderName: string, responses?: Responses) {
-		this.addToEndpointFile(generateResponses(this.responsesImports, responses))
-		this.addToEndpointFile(generateTypedRequest(this.typedRequest, this.typedRequestImports))
-
-		this.addToStartOfEndpointFile(generateImportString(this.typedRequestImports, 'express-serve-static-core'))
-		this.addToStartOfEndpointFile(generateImportString(this.componentImports, './schemas.types'))
-		this.addToStartOfEndpointFile(generateImportString(this.responsesImports, './responses.types'))
-
-		createSchemaFile(`${outputFolderName}/${this.operationId}.ts`, this.endpointFile)
 	}
 
 	private generateParameters(parameters?: Parameters) {
@@ -86,7 +69,7 @@ export class GenerateEndpoint {
 		paramString += generateParameterInterface(convertedParameters)
 		paramString = `${generateImportString(localImports, './schemas.types')}${paramString}`
 
-		this.addToEndpointFile(paramString)
+		this.endpointFile.paramString = paramString
 	}
 
 	private generateParameterFromRef(convertedParameters: Params, { $ref }: Ref) {
@@ -97,15 +80,9 @@ export class GenerateEndpoint {
 			name = `${capitalizeFirstLetter(this.components.parameters[name].name)} as ${unmodifiedName}`
 		}
 
-		this.addToComponentImports(name)
+		this.endpointFile.componentImports.add(name)
 
 		generateParameterObjectFromRef(convertedParameters, unmodifiedName, this.components.parameters)
-	}
-
-	private addToComponentImports(name: string) {
-		if (this.componentImports.includes(name)) return
-
-		this.componentImports.push(name)
 	}
 
 	private generateRequestBody(requestBody?: RequestBody) {
@@ -121,6 +98,7 @@ export class GenerateEndpoint {
 		if (!requestBodySchema) throw new Error('Missing request body')
 		if (!('properties' in requestBodySchema)) throw new Error('Request body without parameters not supported')
 
-		this.addToEndpointFile(`${generateInterface(`RequestBody`, requestBodySchema, this.componentImports)}`)
+		const bodyString = `${generateInterface(`RequestBody`, requestBodySchema, this.endpointFile.componentImports)}`
+		this.endpointFile.requestBodyString = bodyString
 	}
 }

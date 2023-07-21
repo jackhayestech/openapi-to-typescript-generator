@@ -1,7 +1,7 @@
 import { generateInterfaceKey, getComponentNameFromRef, newLine } from '../common'
 import { Response, Responses } from '../types/types'
 
-export const generateResponses = (imports: string[], responses?: Responses) => {
+export const generateEndpointResponses = (imports: string[], responses?: Responses) => {
 	let responsesString = `export interface Responses {${newLine}`
 
 	for (const key in responses) {

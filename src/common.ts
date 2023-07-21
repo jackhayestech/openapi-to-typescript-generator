@@ -1,18 +1,20 @@
 import { writeFile } from 'fs'
+import { ImportCollection } from './generation/importCollection'
 import { ArraySchema, ObjectSchema, Primitive } from './types/common.types'
 
-export const generateInterface = (name: string, schema: ObjectSchema, imports?: string[]): string => {
+export const generateInterface = (name: string, schema: ObjectSchema, imports?: ImportCollection): string => {
 	let interfaceString = `interface ${name} {${newLine}`
 
 	for (const key in schema.properties) {
 		let optional = !schema?.required?.includes(key) ? '?' : ''
+		let properties = schema.properties[key]
 
 		if (schema.properties[key].type === 'array') {
-			interfaceString += generateArrayInterfaceKey(key, schema.properties[key] as ArraySchema, optional, imports)
+			interfaceString += generateArrayInterfaceKey(key, properties as ArraySchema, optional, imports?.imports)
 		} else if (schema.properties[key].type === 'object') {
-			interfaceString += generateObjectInterfaceKey(key, schema.properties[key] as ObjectSchema, optional, imports)
+			interfaceString += generateObjectInterfaceKey(key, properties as ObjectSchema, optional, imports?.imports)
 		} else {
-			interfaceString += generateInterfaceKey(key, schema.properties[key].type, optional)
+			interfaceString += generateInterfaceKey(key, properties.type, optional)
 		}
 	}
 

@@ -1,12 +1,13 @@
-import { createSchemaFile, generateExportLine, generateImportString, generateInterface } from '../common'
+import { createSchemaFile, generateExportLine, generateInterface } from '../common'
 import { ReqResponse, Responses } from '../types/component.types'
+import { ImportCollection } from './importCollection'
 
 const fileName = 'responses.types'
 
 export const generateResponseComponents = (output: string, responses?: Responses): string => {
 	if (!responses) return ''
 
-	const imports: string[] = []
+	const imports = new ImportCollection('./schemas.types')
 	let fileString = ''
 	let response
 
@@ -17,13 +18,13 @@ export const generateResponseComponents = (output: string, responses?: Responses
 		}
 	}
 
-	fileString = `${generateImportString(imports, './schemas.types')}${fileString}`
+	fileString = `${imports.generateImportString()}${fileString}`
 
 	createSchemaFile(`${output}/${fileName}.ts`, fileString)
 
 	return generateExportLine(fileName)
 }
 
-const generateResponse = (key: string, response: ReqResponse, imports: string[]): string => {
+const generateResponse = (key: string, response: ReqResponse, imports: ImportCollection): string => {
 	return `export ${generateInterface(key, response.content['application/json'].schema, imports)}`
 }

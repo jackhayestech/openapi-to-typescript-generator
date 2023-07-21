@@ -1,7 +1,10 @@
 import { indent, newLine } from '../common'
 import { TypedRequestKeys } from '../types/common.types'
 
-export const generateTypedRequest = (typedRequestKeys: TypedRequestKeys, typedRequestImports: string[]): string => {
+export const generateExpressJsTypedRequest = (
+	typedRequestKeys: TypedRequestKeys,
+	typedRequestImports: string[],
+): string => {
 	if (!typedRequestKeys.body && !typedRequestKeys.params) return ''
 
 	let comma = false
