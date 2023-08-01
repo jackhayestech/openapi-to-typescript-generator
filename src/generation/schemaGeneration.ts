@@ -1,12 +1,6 @@
-import {
-	createSchemaFile,
-	generateExportLine,
-	generateInterface,
-	generateType,
-	getComponentNameFromRef,
-	newLine,
-} from '../common'
+import { createSchemaFile, generateExportLine, generateType, getComponentNameFromRef, newLine } from '../common'
 import { AllOfSchema, Schema, Schemas } from '../types/common.types'
+import { GenerateInterface } from './generateInterface'
 
 export class SchemaGeneration {
 	output: string
@@ -40,7 +34,8 @@ export class SchemaGeneration {
 
 		switch (schema.type) {
 			case 'object':
-				this.fileString += `export ${generateInterface(name, schema)}`
+				const interfaceGen = new GenerateInterface(name, schema)
+				this.fileString += `export ${interfaceGen.interface}`
 				return
 			case 'number':
 			case 'string':

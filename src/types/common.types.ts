@@ -19,7 +19,7 @@ export interface ObjectSchema {
 	properties?: {
 		[key: string]: BasicSchema | ArraySchema
 	}
-	$ref?: {}
+	$ref?: string
 	additionalProperties?: boolean
 }
 
@@ -31,10 +31,14 @@ export interface ArraySchemaOneType {
 	}
 }
 
+export interface AnyOf {
+	type: Primitive
+}
+
 export interface ArraySchemaMultipleTypes {
 	type: SchemaArray
 	items: {
-		anyOf: { type: Primitive }[]
+		anyOf: AnyOf[]
 	}
 }
 
