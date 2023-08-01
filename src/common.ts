@@ -11,23 +11,6 @@ export const capitalizeFirstLetter = (string: string) => string.charAt(0).toUppe
 
 export const getComponentNameFromRef = (ref: string): string => ref.split('/').slice(-1)[0]
 
-export const generateImportString = (imports: string[], fileName: string): string => {
-	if (imports.length === 0) return ''
-
-	let importString = 'import {'
-
-	imports.forEach((imp, i) => {
-		importString += ` ${imp}`
-		if (i !== imports.length - 1) {
-			importString += ','
-		}
-	})
-
-	importString += ` } from '${fileName}'${newLine}${newLine}`
-
-	return importString
-}
-
 export const generateExportLine = (fileName: string, asString = '') =>
 	`export * ${asString} from './${fileName}'${newLine}`
 

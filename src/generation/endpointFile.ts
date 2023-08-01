@@ -1,5 +1,5 @@
 import { createSchemaFile } from '../common'
-import { ImportCollection } from './importCollection'
+import { ImportCollection } from './common/importCollection'
 
 export class EndpointFile {
 	fileString = ''

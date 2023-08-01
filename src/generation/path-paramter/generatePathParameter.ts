@@ -1,12 +1,13 @@
-import { capitalizeFirstLetter, generateImportString, getComponentNameFromRef } from '../common'
-import { ConvertedParameters, Ref } from '../types/common.types'
-import { ComponentParameters } from '../types/component.types'
-import { PathParameters, isPathParameter } from '../types/types'
-import { generateParamTypescript, generateParameterInterface, generateParameterObject } from './parameterGeneration'
+import { capitalizeFirstLetter, getComponentNameFromRef, newLine } from '../../common'
+import { ConvertedParameters, Ref } from '../../types/common.types'
+import { ComponentParameters, Parameter } from '../../types/component.types'
+import { PathParameters, isPathParameter } from '../../types/types'
+import { ImportCollection } from '../common/importCollection'
+import { generateParamTypescript, generateParameterType } from './utils'
 
 export class PathParameterGenerator {
 	private convertedParameters: ConvertedParameters = {}
-	private schemaImports: string[] = []
+	private schemaImports = new ImportCollection('./schemas.types')
 	private parameterSchemas: ComponentParameters
 
 	/**
@@ -31,14 +32,14 @@ export class PathParameterGenerator {
 		parameters.forEach((param) => {
 			if (isPathParameter(param)) {
 				this.parametersString += generateParamTypescript(param)
-				generateParameterObject(this.convertedParameters, param, this.schemaImports)
+				this.generateParameterObject(param)
 			} else {
 				this.generateParameterFromRef(param)
 			}
 		})
 
-		this.parametersString += generateParameterInterface(this.convertedParameters)
-		this.parametersString = `${generateImportString(this.schemaImports, './schemas.types')}${this.parametersString}`
+		this.parametersString += this.generateParameterInterface()
+		this.parametersString = `${this.schemaImports.generateImportString()}${this.parametersString}`
 	}
 
 	private generateParameterFromRef({ $ref }: Ref) {
@@ -71,5 +72,32 @@ export class PathParameterGenerator {
 			name: param.name,
 			interface: name,
 		})
+	}
+
+	private generateParameterObject = (param: Parameter) => {
+		if (!this.convertedParameters[param.in]) {
+			this.convertedParameters[param.in] = []
+		}
+
+		if ('$ref' in param.schema) {
+			const name = getComponentNameFromRef(param.schema.$ref as string)
+			this.schemaImports.add(name)
+		}
+
+		this.convertedParameters[param.in].push({
+			required: param.required,
+			name: param.name,
+			interface: capitalizeFirstLetter(param.name),
+		})
+	}
+
+	private generateParameterInterface = (): string => {
+		let paramString = `interface Parameters {${newLine}`
+		for (const key in this.convertedParameters) {
+			const paramType = generateParameterType(key, this.convertedParameters[key])
+			paramString = `${paramString}${paramType}${newLine}`
+		}
+		paramString = `${paramString}}${newLine}${newLine}`
+		return paramString
 	}
 }

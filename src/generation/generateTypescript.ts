@@ -58,6 +58,6 @@ export class GenerateTypescript {
 
 	generateEndpoint(endpoint: Endpoint) {
 		const ep = new GenerateEndpoint(this.outputFolderName, this.components, endpoint)
-		this.addToIndexFile(ep.getExportLine())
+		this.addToIndexFile(ep.exportLine)
 	}
 }

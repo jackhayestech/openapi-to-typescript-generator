@@ -1,6 +1,6 @@
 import { createSchemaFile, generateExportLine, generateType, getComponentNameFromRef, newLine } from '../common'
 import { AllOfSchema, Schema, Schemas } from '../types/common.types'
-import { GenerateInterface } from './generateInterface'
+import { GenerateInterface } from './common/generateInterface'
 
 export class SchemaGeneration {
 	output: string
@@ -24,7 +24,7 @@ export class SchemaGeneration {
 
 	private generateSchema(name: string, schema: Schema) {
 		if ('allOf' in schema) {
-			this.allOfSchemaGenerate(name, schema)
+			this.fileString += this.allOfSchemaGenerate(name, schema)
 			return
 		}
 
@@ -46,7 +46,7 @@ export class SchemaGeneration {
 		}
 	}
 
-	allOfSchemaGenerate = (name: string, { allOf }: AllOfSchema) => {
+	allOfSchemaGenerate = (name: string, { allOf }: AllOfSchema): string => {
 		let schemaString = `export type ${name} = `
 
 		allOf.forEach(({ $ref }, i) => {
@@ -62,7 +62,7 @@ export class SchemaGeneration {
 
 		schemaString += `${newLine}${newLine}`
 
-		this.fileString += schemaString
+		return schemaString
 	}
 
 	getExport() {

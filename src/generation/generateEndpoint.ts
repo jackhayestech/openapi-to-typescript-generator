@@ -1,10 +1,10 @@
 import { generateExportLine, getComponentNameFromRef } from '../common'
 import { Components, RequestBody } from '../types/component.types'
 import { Endpoint, PathParameters } from '../types/types'
+import { GenerateInterface } from './common/generateInterface'
 import { EndpointFile } from './endpointFile'
-import { GenerateInterface } from './generateInterface'
-import { PathParameterGenerator } from './generatePathParameter'
 import { generateExpressJsTypedRequest } from './generateTypedRequest'
+import { PathParameterGenerator } from './path-paramter/generatePathParameter'
 import { generateEndpointResponses } from './responseGeneration'
 
 export class GenerateEndpoint {
@@ -13,6 +13,7 @@ export class GenerateEndpoint {
 	file = new EndpointFile()
 	hasParameters = false
 	hasBody = false
+	exportLine: string
 
 	constructor(
 		outputFolderName: string,
@@ -36,10 +37,7 @@ export class GenerateEndpoint {
 		)
 
 		this.file.createEndpointFile(outputFolderName, this.operationId)
-	}
-
-	getExportLine(): string {
-		return generateExportLine(this.operationId, ` as ${this.operationId}`)
+		this.exportLine = generateExportLine(this.operationId, ` as ${this.operationId}`)
 	}
 
 	private generateParameters(parameters?: PathParameters) {

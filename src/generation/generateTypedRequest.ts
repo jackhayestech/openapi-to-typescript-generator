@@ -1,5 +1,5 @@
 import { indent, newLine } from '../common'
-import { ImportCollection } from './importCollection'
+import { ImportCollection } from './common/importCollection'
 
 export const generateExpressJsTypedRequest = (
 	hasParameters: boolean,
