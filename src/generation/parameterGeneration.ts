@@ -46,34 +46,6 @@ export const generateParameterObject = (params: ConvertedParameters, param: Para
 	})
 }
 
-export const generateParameterObjectFromRef = (
-	params: ConvertedParameters,
-	name: string,
-	componentParameters?: {
-		[key: string]: Parameter
-	},
-) => {
-	if (!componentParameters) {
-		throw new Error('Component params expected')
-	}
-
-	if (!(name in componentParameters)) {
-		throw new Error('Expected param not in component params')
-	}
-
-	const param = componentParameters[name]
-
-	if (!params[param.in]) {
-		params[param.in] = []
-	}
-
-	params[param.in].push({
-		required: param.required,
-		name: param.name,
-		interface: name,
-	})
-}
-
 export const generateParamTypescript = ({ name, schema }: Parameter): string => {
 	if ('$ref' in schema) return ''
 	if ('type' in schema) return `export ${generateType(name, schema.type)}${newLine}`

@@ -1,42 +1,44 @@
 import { capitalizeFirstLetter, generateImportString, getComponentNameFromRef } from '../common'
 import { ConvertedParameters, Ref } from '../types/common.types'
-import { Components } from '../types/component.types'
-import { PathParameters } from '../types/types'
-import {
-	generateParamTypescript,
-	generateParameterInterface,
-	generateParameterObject,
-	generateParameterObjectFromRef,
-} from './parameterGeneration'
+import { ComponentParameters } from '../types/component.types'
+import { PathParameters, isPathParameter } from '../types/types'
+import { generateParamTypescript, generateParameterInterface, generateParameterObject } from './parameterGeneration'
 
 export class PathParameterGenerator {
-	convertedParameters: ConvertedParameters = {}
-	schemaImports: string[] = []
-	localImports: string[] = []
-	parameterSchemas: Components['parameters']
-	fileString = ''
+	private convertedParameters: ConvertedParameters = {}
+	private schemaImports: string[] = []
+	private parameterSchemas: ComponentParameters
 
-	constructor(parameters: PathParameters, schemas: Components['parameters']) {
+	/**
+	 * The imports required for the
+	 */
+	imports: string[] = []
+	/**
+	 * The converted path parameter string
+	 */
+	parametersString = ''
+
+	constructor(parameters: PathParameters, schemas?: ComponentParameters) {
+		if (!schemas) {
+			throw new Error('Component params expected')
+		}
+
 		this.parameterSchemas = schemas
 		this.generateParameters(parameters)
 	}
 
 	private generateParameters(parameters: PathParameters) {
-		let fileString = ''
-
 		parameters.forEach((param) => {
-			if ('in' in param) {
-				fileString += generateParamTypescript(param)
+			if (isPathParameter(param)) {
+				this.parametersString += generateParamTypescript(param)
 				generateParameterObject(this.convertedParameters, param, this.schemaImports)
 			} else {
 				this.generateParameterFromRef(param)
 			}
 		})
 
-		fileString += generateParameterInterface(this.convertedParameters)
-		fileString = `${generateImportString(this.schemaImports, './schemas.types')}${fileString}`
-
-		this.fileString = fileString
+		this.parametersString += generateParameterInterface(this.convertedParameters)
+		this.parametersString = `${generateImportString(this.schemaImports, './schemas.types')}${this.parametersString}`
 	}
 
 	private generateParameterFromRef({ $ref }: Ref) {
@@ -48,8 +50,26 @@ export class PathParameterGenerator {
 			name = `${capitalizeFirstLetter(param.name)} as ${unmodifiedName}`
 		}
 
-		this.localImports.push(name)
+		this.imports.push(name)
 
-		generateParameterObjectFromRef(this.convertedParameters, unmodifiedName, this.parameterSchemas)
+		this.generateParameterObjectFromRef(unmodifiedName)
+	}
+
+	private generateParameterObjectFromRef = (name: string) => {
+		if (!(name in this.parameterSchemas)) {
+			throw new Error('Expected param not in component params')
+		}
+
+		const param = this.parameterSchemas[name]
+
+		if (!this.convertedParameters[param.in]) {
+			this.convertedParameters[param.in] = []
+		}
+
+		this.convertedParameters[param.in].push({
+			required: param.required,
+			name: param.name,
+			interface: name,
+		})
 	}
 }

@@ -22,6 +22,10 @@ export interface Responses {
 
 type ParamType = 'query' | 'path'
 
+export const isPathParameter = (param: PathParameter | unknown): param is PathParameter => {
+	return (param as PathParameter).in !== undefined
+}
+
 export interface PathParameter {
 	in: ParamType
 	name: string

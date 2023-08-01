@@ -1,13 +1,15 @@
 import { ObjectSchema, Schema } from './common.types'
 import { PathParameter } from './types'
 
+export interface ComponentParameters {
+	[key: string]: PathParameter
+}
+
 export interface Components {
 	requestBodies?: {
 		[key: string]: RequestBody
 	}
-	parameters?: {
-		[key: string]: PathParameter
-	}
+	parameters?: ComponentParameters
 	schemas?: {
 		[key: string]: Schema
 	}

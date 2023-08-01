@@ -48,8 +48,8 @@ export class GenerateEndpoint {
 
 		const parametersGen = new PathParameterGenerator(parameters, this.components.parameters)
 
-		this.file.paramString = parametersGen.fileString
-		this.file.componentImports.addMany(parametersGen.localImports)
+		this.file.paramString = parametersGen.parametersString
+		this.file.componentImports.addMany(parametersGen.imports)
 	}
 
 	private generateRequestBody(requestBody?: RequestBody) {
