@@ -1,19 +1,19 @@
 import { indent, newLine } from '../common'
-import { TypedRequestKeys } from '../types/common.types'
 import { ImportCollection } from './importCollection'
 
 export const generateExpressJsTypedRequest = (
-	typedRequestKeys: TypedRequestKeys,
+	hasParameters: boolean,
+	hasBody: boolean,
 	typedRequestImports: ImportCollection,
 ): string => {
-	if (!typedRequestKeys.body && !typedRequestKeys.params) return ''
+	if (!hasBody && !hasParameters) return ''
 
 	let comma = false
 	let typedRequest = `interface TypedRequest <`
 	let typedRequestBody = ''
 	let request = `export type Request = TypedRequest<`
 
-	if (typedRequestKeys.params) {
+	if (hasParameters) {
 		typedRequestImports.add('Query')
 		typedRequest += `T extends Query`
 		typedRequestBody += `${indent}query: T${newLine}`
@@ -21,7 +21,7 @@ export const generateExpressJsTypedRequest = (
 		comma = true
 	}
 
-	if (typedRequestKeys.body) {
+	if (hasBody) {
 		typedRequestBody += `${indent}body: U${newLine}`
 		if (comma) {
 			request += ','

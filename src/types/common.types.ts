@@ -52,14 +52,12 @@ export type BasicSchema = PrimitiveSchema | ObjectSchema | ArraySchema
 export type Schema = AllOfSchema | BasicSchema | Ref
 export type Schemas = { [key: string]: Schema }
 
-export type TypedRequestKeys = { body: boolean; params: boolean }
-
 export interface ParamDetail {
 	required: boolean
 	name: string
 	interface: string
 }
 
-export interface Params {
+export interface ConvertedParameters {
 	[key: string]: ParamDetail[]
 }

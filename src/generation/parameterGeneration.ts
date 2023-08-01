@@ -1,8 +1,8 @@
 import { capitalizeFirstLetter, generateType, getComponentNameFromRef, indent, newLine } from '../common'
-import { Params, ParamDetail } from '../types/common.types'
+import { ConvertedParameters, ParamDetail } from '../types/common.types'
 import { Parameter } from '../types/component.types'
 
-export const generateParameterInterface = (params: Params): string => {
+export const generateParameterInterface = (params: ConvertedParameters): string => {
 	let paramString = `interface Parameters {${newLine}`
 	for (const key in params) {
 		paramString = `${paramString}${generateParameterType(key, params[key])}${newLine}`
@@ -27,7 +27,7 @@ export const generateParameterKeys = (params: ParamDetail[]) => {
 	return paramKeys
 }
 
-export const generateParameterObject = (params: Params, param: Parameter, localImports: string[]) => {
+export const generateParameterObject = (params: ConvertedParameters, param: Parameter, localImports: string[]) => {
 	if (!params[param.in]) {
 		params[param.in] = []
 	}
@@ -47,7 +47,7 @@ export const generateParameterObject = (params: Params, param: Parameter, localI
 }
 
 export const generateParameterObjectFromRef = (
-	params: Params,
+	params: ConvertedParameters,
 	name: string,
 	componentParameters?: {
 		[key: string]: Parameter

@@ -1,13 +1,12 @@
-import { ObjectSchema, Ref, Schema } from './common.types'
-
-type ParamType = 'query' | 'path'
+import { ObjectSchema, Schema } from './common.types'
+import { PathParameter } from './types'
 
 export interface Components {
 	requestBodies?: {
 		[key: string]: RequestBody
 	}
 	parameters?: {
-		[key: string]: Parameter
+		[key: string]: PathParameter
 	}
 	schemas?: {
 		[key: string]: Schema
@@ -42,7 +41,8 @@ export interface RequestBodyContent {
 	'application/json': { schema: Schema }
 }
 
-export type Parameters = (Parameter | Ref)[]
+//TODO delete
+type ParamType = 'query' | 'path'
 
 export interface Parameter {
 	in: ParamType

@@ -1,4 +1,5 @@
-import { Parameters, RequestBody } from './component.types'
+import { Ref, Schema } from './common.types'
+import { RequestBody } from './component.types'
 
 export interface Paths {
 	[key: string]: Methods
@@ -19,8 +20,20 @@ export interface Responses {
 	[key: string]: Response
 }
 
+type ParamType = 'query' | 'path'
+
+export interface PathParameter {
+	in: ParamType
+	name: string
+	required: boolean
+	description?: string
+	schema: Schema
+}
+
+export type PathParameters = (PathParameter | Ref)[]
+
 export interface Endpoint {
-	parameters?: Parameters
+	parameters?: PathParameters
 	requestBody?: RequestBody
 	responses?: Responses
 	operationId?: string

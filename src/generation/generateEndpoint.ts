@@ -5,9 +5,9 @@ import {
 	generateInterface,
 	getComponentNameFromRef,
 } from '../common'
-import { Params, Ref, TypedRequestKeys } from '../types/common.types'
-import { Components, Parameters, RequestBody } from '../types/component.types'
-import { Endpoint } from '../types/types'
+import { ConvertedParameters, Ref } from '../types/common.types'
+import { Components, RequestBody } from '../types/component.types'
+import { Endpoint, PathParameters } from '../types/types'
 import { EndpointFile } from './endpointFile'
 import { generateExpressJsTypedRequest } from './generateTypedRequest'
 import {
@@ -22,7 +22,8 @@ export class GenerateEndpoint {
 	components: Components
 	operationId: string
 	file = new EndpointFile()
-	typedRequest: TypedRequestKeys = { body: false, params: false }
+	hasParameters = false
+	hasBody = false
 
 	constructor(
 		outputFolderName: string,
@@ -39,7 +40,11 @@ export class GenerateEndpoint {
 		this.generateRequestBody(requestBody)
 
 		this.file.responsesString = generateEndpointResponses(responsesImports, responses)
-		this.file.expressJsTypedRequest = generateExpressJsTypedRequest(this.typedRequest, typedRequestImports)
+		this.file.expressJsTypedRequest = generateExpressJsTypedRequest(
+			this.hasParameters,
+			this.hasBody,
+			typedRequestImports,
+		)
 
 		this.file.createEndpointFile(outputFolderName, this.operationId)
 	}
@@ -48,12 +53,12 @@ export class GenerateEndpoint {
 		return generateExportLine(this.operationId, ` as ${this.operationId}`)
 	}
 
-	private generateParameters(parameters?: Parameters) {
+	private generateParameters(parameters?: PathParameters) {
 		if (!parameters) return
 
-		this.typedRequest.params = true
+		this.hasParameters = true
 
-		const convertedParameters: Params = {}
+		const convertedParameters: ConvertedParameters = {}
 		const localImports: string[] = []
 		let paramString = ''
 
@@ -72,17 +77,19 @@ export class GenerateEndpoint {
 		this.file.paramString = paramString
 	}
 
-	private generateParameterFromRef(convertedParameters: Params, { $ref }: Ref) {
+	private generateParameterFromRef(convertedParameters: ConvertedParameters, { $ref }: Ref) {
 		let name = getComponentNameFromRef($ref)
 		let unmodifiedName = name
+		const parameters = this.components.parameters
 
-		if (this.components.parameters?.[name]) {
-			name = `${capitalizeFirstLetter(this.components.parameters[name].name)} as ${unmodifiedName}`
+		if (parameters?.[name]) {
+			const param = parameters[name]
+			name = `${capitalizeFirstLetter(param.name)} as ${unmodifiedName}`
 		}
 
 		this.file.componentImports.add(name)
 
-		generateParameterObjectFromRef(convertedParameters, unmodifiedName, this.components.parameters)
+		generateParameterObjectFromRef(convertedParameters, unmodifiedName, parameters)
 	}
 
 	private generateRequestBody(requestBody?: RequestBody) {
@@ -90,7 +97,7 @@ export class GenerateEndpoint {
 		if (!requestBody['$ref']) throw new Error('Non ref request bodies not supported')
 		if (!this.components?.requestBodies) throw new Error('Missing request body component')
 
-		this.typedRequest.body = true
+		this.hasBody = true
 		const path = requestBody['$ref']
 		const componentName = getComponentNameFromRef(path)
 		const requestBodySchema = this.components?.requestBodies?.[componentName]?.content?.['application/json'].schema
