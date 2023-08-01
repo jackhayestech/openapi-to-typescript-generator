@@ -1,21 +1,9 @@
-import {
-	capitalizeFirstLetter,
-	generateExportLine,
-	generateImportString,
-	generateInterface,
-	getComponentNameFromRef,
-} from '../common'
-import { ConvertedParameters, Ref } from '../types/common.types'
+import { generateExportLine, generateInterface, getComponentNameFromRef } from '../common'
 import { Components, RequestBody } from '../types/component.types'
 import { Endpoint, PathParameters } from '../types/types'
 import { EndpointFile } from './endpointFile'
+import { PathParameterGenerator } from './generatePathParameter'
 import { generateExpressJsTypedRequest } from './generateTypedRequest'
-import {
-	generateParamTypescript,
-	generateParameterInterface,
-	generateParameterObject,
-	generateParameterObjectFromRef,
-} from './parameterGeneration'
 import { generateEndpointResponses } from './responseGeneration'
 
 export class GenerateEndpoint {
@@ -58,38 +46,10 @@ export class GenerateEndpoint {
 
 		this.hasParameters = true
 
-		const convertedParameters: ConvertedParameters = {}
-		const localImports: string[] = []
-		let paramString = ''
+		const parametersGen = new PathParameterGenerator(parameters, this.components.parameters)
 
-		parameters.forEach((param) => {
-			if ('in' in param) {
-				paramString += generateParamTypescript(param)
-				generateParameterObject(convertedParameters, param, localImports)
-			} else {
-				this.generateParameterFromRef(convertedParameters, param)
-			}
-		})
-
-		paramString += generateParameterInterface(convertedParameters)
-		paramString = `${generateImportString(localImports, './schemas.types')}${paramString}`
-
-		this.file.paramString = paramString
-	}
-
-	private generateParameterFromRef(convertedParameters: ConvertedParameters, { $ref }: Ref) {
-		let name = getComponentNameFromRef($ref)
-		let unmodifiedName = name
-		const parameters = this.components.parameters
-
-		if (parameters?.[name]) {
-			const param = parameters[name]
-			name = `${capitalizeFirstLetter(param.name)} as ${unmodifiedName}`
-		}
-
-		this.file.componentImports.add(name)
-
-		generateParameterObjectFromRef(convertedParameters, unmodifiedName, parameters)
+		this.file.paramString = parametersGen.fileString
+		this.file.componentImports.addMany(parametersGen.localImports)
 	}
 
 	private generateRequestBody(requestBody?: RequestBody) {

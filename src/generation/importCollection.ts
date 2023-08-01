@@ -14,6 +14,13 @@ export class ImportCollection {
 		this.imports.push(newImport)
 	}
 
+	addMany = (newImports: string[]) =>
+		newImports.forEach((newImport) => {
+			if (this.imports.includes(newImport)) return
+
+			this.imports.push(newImport)
+		})
+
 	generateImportString = (): string => {
 		if (this.imports.length === 0) return ''
 

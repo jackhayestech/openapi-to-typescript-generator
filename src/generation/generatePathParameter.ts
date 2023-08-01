@@ -16,8 +16,9 @@ export class PathParameterGenerator {
 	parameterSchemas: Components['parameters']
 	fileString = ''
 
-	constructor(schemas: Components['parameters']) {
+	constructor(parameters: PathParameters, schemas: Components['parameters']) {
 		this.parameterSchemas = schemas
+		this.generateParameters(parameters)
 	}
 
 	private generateParameters(parameters: PathParameters) {
