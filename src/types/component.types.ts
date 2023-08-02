@@ -1,14 +1,12 @@
 import { ObjectSchema, Schema } from './common.types'
-import { PathParameter } from './types'
+import { PathParameter } from './endpoint.types'
 
 export interface ComponentParameters {
 	[key: string]: PathParameter
 }
 
 export interface Components {
-	requestBodies?: {
-		[key: string]: RequestBody
-	}
+	requestBodies?: RequestBodies
 	parameters?: ComponentParameters
 	schemas?: {
 		[key: string]: Schema
@@ -41,15 +39,4 @@ export interface RequestBodies {
 
 export interface RequestBodyContent {
 	'application/json': { schema: Schema }
-}
-
-type ParamType = 'query' | 'path'
-
-export interface Parameter {
-	in: ParamType
-	name: string
-	required: boolean
-	description?: string
-	schema: Schema
-	$ref?: string
 }

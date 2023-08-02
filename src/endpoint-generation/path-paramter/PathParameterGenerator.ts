@@ -1,8 +1,8 @@
 import { ImportCollection } from '../../common/ImportCollection'
 import { capitalizeFirstLetter, getComponentNameFromRef, newLine } from '../../common/utilities'
 import { ConvertedParameters, Ref } from '../../types/common.types'
-import { ComponentParameters, Parameter } from '../../types/component.types'
-import { PathParameters, isPathParameter } from '../../types/types'
+import { ComponentParameters } from '../../types/component.types'
+import { PathParameter, PathParameters, isPathParameter } from '../../types/endpoint.types'
 import { generateParamTypescript, generateParameterType } from './utilities'
 
 export class PathParameterGenerator {
@@ -74,7 +74,7 @@ export class PathParameterGenerator {
 		})
 	}
 
-	private generateParameterObject = (param: Parameter) => {
+	private generateParameterObject = (param: PathParameter) => {
 		if (!this.convertedParameters[param.in]) {
 			this.convertedParameters[param.in] = []
 		}

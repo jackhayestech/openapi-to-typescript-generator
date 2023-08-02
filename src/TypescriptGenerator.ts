@@ -5,7 +5,7 @@ import { createSchemaFile } from './common/utilities'
 import { EndpointGenerator } from './endpoint-generation/EndpointGenerator'
 import { ResponseComponentGenerator } from './endpoint-generation/ResponseComponentGenerator'
 import { Components } from './types/component.types'
-import { Endpoint, Methods, Paths } from './types/types'
+import { Endpoint, Methods, Paths } from './types/endpoint.types'
 
 export class TypescriptGenerator {
 	indexFile: string = ''

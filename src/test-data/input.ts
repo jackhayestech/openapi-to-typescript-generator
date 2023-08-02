@@ -1,5 +1,5 @@
 import { Components } from '../types/component.types'
-import { Paths } from '../types/types'
+import { Paths } from '../types/endpoint.types'
 
 export const paths: Paths = {
 	'/event': {

@@ -1,7 +1,7 @@
 import { InterfaceGenerator } from '../common/InterfaceGenerator'
 import { generateExportString, getComponentNameFromRef } from '../common/utilities'
 import { Components, RequestBody } from '../types/component.types'
-import { Endpoint, PathParameters } from '../types/types'
+import { Endpoint, PathParameters } from '../types/endpoint.types'
 import { EndpointFileGenerator } from './EndpointFileGenerator'
 import { generateExpressJsTypedRequest } from './generateTypedRequest'
 import { PathParameterGenerator } from './path-paramter/PathParameterGenerator'

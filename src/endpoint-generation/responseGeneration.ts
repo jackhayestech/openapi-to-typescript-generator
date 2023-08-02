@@ -1,6 +1,6 @@
 import { ImportCollection } from '../common/ImportCollection'
 import { generateInterfaceKey, getComponentNameFromRef, newLine } from '../common/utilities'
-import { Response, Responses } from '../types/types'
+import { Response, Responses } from '../types/endpoint.types'
 
 export const generateEndpointResponses = (imports: ImportCollection, responses?: Responses) => {
 	let responsesString = `export interface Responses {${newLine}`
