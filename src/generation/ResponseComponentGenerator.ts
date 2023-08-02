@@ -1,7 +1,7 @@
 import { ReqResponse, Responses } from '../types/component.types'
 import { ImportCollection } from './common/ImportCollection'
 import { InterfaceGenerator } from './common/InterfaceGenerator'
-import { createSchemaFile, generateExportLine } from './common/utilities'
+import { createSchemaFile, generateExportString } from './common/utilities'
 
 export class ResponseComponentGenerator {
 	fileName = 'responses.types'
@@ -36,7 +36,7 @@ export class ResponseComponentGenerator {
 		return `export ${interfaceGen.interface}`
 	}
 
-	getExport() {
-		return generateExportLine(this.fileName)
+	getExportString() {
+		return generateExportString(this.fileName)
 	}
 }

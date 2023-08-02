@@ -1,6 +1,6 @@
 import { Components, RequestBody } from '../types/component.types'
 import { Endpoint, PathParameters } from '../types/types'
-import { GenerateInterface } from './common/InterfaceGenerator'
+import { InterfaceGenerator } from './common/InterfaceGenerator'
 import { generateExportLine, getComponentNameFromRef } from './common/utilities'
 import { EndpointFileGenerator } from './EndpointFileGenerator'
 import { generateExpressJsTypedRequest } from './generateTypedRequest'
@@ -64,7 +64,7 @@ export class EndpointGenerator {
 		if (!requestBodySchema) throw new Error('Missing request body')
 		if (!('properties' in requestBodySchema)) throw new Error('Request body without parameters not supported')
 
-		const interfaceGen = new GenerateInterface(`RequestBody`, requestBodySchema, this.file.componentImports)
+		const interfaceGen = new InterfaceGenerator(`RequestBody`, requestBodySchema, this.file.componentImports)
 
 		const bodyString = interfaceGen.interface
 

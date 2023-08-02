@@ -2,7 +2,7 @@ import { AllOfSchema, Schema, Schemas } from '../types/common.types'
 import { InterfaceGenerator } from './common/InterfaceGenerator'
 import {
 	createSchemaFile,
-	generateExportLine,
+	generateExportString,
 	generateType,
 	getComponentNameFromRef,
 	newLine,
@@ -71,7 +71,7 @@ export class SchemaGenerator {
 		return schemaString
 	}
 
-	getExport() {
-		return generateExportLine(this.fileName)
+	getExportString() {
+		return generateExportString(this.fileName)
 	}
 }

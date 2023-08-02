@@ -1,6 +1,6 @@
 import fs from 'fs'
 
-import { GenerateTypescript } from '../generation/generateTypescript'
+import { TypescriptGenerator } from '../generation/TypescriptGenerator'
 import { components, paths } from '../test-data/input'
 import {
 	createEventFile,
@@ -21,7 +21,7 @@ describe('Tests the full generation using the example open api file', () => {
 			.mockImplementation((dir: any, fs: any, func: any) => fileString.push({ name: dir, fs: fs.trim() }))
 		const mkDirSpy = jest.spyOn(fs, 'mkdirSync').mockImplementation()
 
-		new GenerateTypescript(paths, components, output)
+		new TypescriptGenerator(paths, components, output)
 
 		expect(mkDirSpy).toHaveBeenCalledWith(output)
 		expect(writeSpy).toHaveBeenCalledTimes(6)

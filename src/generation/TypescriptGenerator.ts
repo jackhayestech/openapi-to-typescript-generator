@@ -18,23 +18,20 @@ export class TypescriptGenerator {
 
 		this.createOutputDirectory()
 
-		const schemaExport = new SchemaGenerator(this.outputFolderName, components.schemas).getExport()
-		this.addToIndexFile(schemaExport)
+		const schemaGen = new SchemaGenerator(this.outputFolderName, components.schemas)
+		this.addExportToIndexFile(schemaGen.getExportString())
 
-		const responseComponentsExport = new ResponseComponentGenerator(
-			this.outputFolderName,
-			components.responses,
-		).getExport()
-		this.addToIndexFile(responseComponentsExport)
+		const responseComponentsGen = new ResponseComponentGenerator(this.outputFolderName, components.responses)
+		this.addExportToIndexFile(responseComponentsGen.getExportString())
 
-		for (const key in paths) {
-			this.generatePath(paths[key])
+		for (const path in paths) {
+			this.generatePath(paths[path])
 		}
 
 		createSchemaFile(`${output}/index.ts`, this.indexFile)
 	}
 
-	addToIndexFile(str: string) {
+	addExportToIndexFile(str: string) {
 		this.indexFile += str
 	}
 
@@ -61,6 +58,6 @@ export class TypescriptGenerator {
 
 	generateEndpoint(endpoint: Endpoint) {
 		const ep = new EndpointGenerator(this.outputFolderName, this.components, endpoint)
-		this.addToIndexFile(ep.exportLine)
+		this.addExportToIndexFile(ep.exportLine)
 	}
 }
