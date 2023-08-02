@@ -1,5 +1,5 @@
 import { ObjectSchema, Schema } from './common.types'
-import { PathParameter } from './endpoint.types'
+import { PathParameter, RequestBody } from './endpoint.types'
 
 export interface ComponentParameters {
 	[key: string]: PathParameter
@@ -25,12 +25,6 @@ export interface ReqResponse {
 			schema: ObjectSchema
 		}
 	}
-}
-
-export type RequestBody = {
-	description?: string
-	content?: RequestBodyContent
-	$ref?: string
 }
 
 export interface RequestBodies {

@@ -1,5 +1,5 @@
 import { Ref, Schema } from './common.types'
-import { RequestBody } from './component.types'
+import { RequestBodyContent } from './component.types'
 
 export interface Paths {
 	[key: string]: Methods
@@ -35,6 +35,12 @@ export interface PathParameter {
 }
 
 export type PathParameters = (PathParameter | Ref)[]
+
+export type RequestBody = {
+	description?: string
+	content?: RequestBodyContent
+	$ref?: string
+}
 
 export interface Endpoint {
 	parameters?: PathParameters
