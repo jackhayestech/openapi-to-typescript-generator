@@ -1,6 +1,12 @@
-import { createSchemaFile, generateExportLine, generateType, getComponentNameFromRef, newLine } from '../common'
 import { AllOfSchema, Schema, Schemas } from '../types/common.types'
 import { GenerateInterface } from './common/generateInterface'
+import {
+	createSchemaFile,
+	generateExportLine,
+	generateType,
+	getComponentNameFromRef,
+	newLine,
+} from './common/utilities'
 
 export class SchemaGeneration {
 	output: string

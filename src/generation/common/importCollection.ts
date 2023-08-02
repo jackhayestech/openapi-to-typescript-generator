@@ -1,4 +1,4 @@
-import { newLine } from '../../common'
+import { newLine } from './utilities'
 
 export class ImportCollection {
 	filePath: string

@@ -1,8 +1,8 @@
 import fs from 'fs'
 
-import { createSchemaFile } from '../common'
 import { Components } from '../types/component.types'
 import { Endpoint, Methods, Paths } from '../types/types'
+import { createSchemaFile } from './common/utilities'
 import { GenerateEndpoint } from './generateEndpoint'
 import { ResponseComponent } from './responseComponentGeneration'
 import { SchemaGeneration } from './schemaGeneration'

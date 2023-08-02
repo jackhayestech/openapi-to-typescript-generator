@@ -1,6 +1,6 @@
-import { generateType, indent, newLine } from '../../common'
 import { ParamDetail } from '../../types/common.types'
 import { Parameter } from '../../types/component.types'
+import { generateType, indent, newLine } from '../common/utilities'
 
 export const generateParamTypescript = ({ name, schema }: Parameter): string => {
 	if ('$ref' in schema) return ''

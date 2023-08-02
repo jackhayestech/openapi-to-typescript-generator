@@ -1,6 +1,6 @@
-import { generateInterfaceKey, getComponentNameFromRef, indent, newLine } from '../../common'
 import { AnyOf, ArraySchema, ObjectSchema } from '../../types/common.types'
 import { ImportCollection } from './importCollection'
+import { generateInterfaceKey, getComponentNameFromRef, indent, newLine } from './utilities'
 
 export class GenerateInterface {
 	name: string
