@@ -3,7 +3,7 @@
 import fs from 'fs'
 import { parse } from 'yaml'
 
-import { TypescriptGenerator } from './generation/TypescriptGenerator'
+import { TypescriptGenerator } from './TypescriptGenerator'
 import { getFlag } from './utilities'
 
 const fileName = getFlag(process.argv, '-i') as string

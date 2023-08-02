@@ -1,6 +1,6 @@
 import fs from 'fs'
 
-import { TypescriptGenerator } from '../generation/TypescriptGenerator'
+import { TypescriptGenerator } from '../TypescriptGenerator'
 import { components, paths } from '../test-data/input'
 import {
 	createEventFile,

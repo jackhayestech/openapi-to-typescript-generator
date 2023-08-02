@@ -1,5 +1,5 @@
 import { writeFile } from 'fs'
-import { Primitive } from '../../types/common.types'
+import { Primitive } from '../types/common.types'
 
 export const generateInterfaceKey = (key: string, value: Primitive, optional: string): string =>
 	`${indent}${key}${optional}: ${value}${newLine}`

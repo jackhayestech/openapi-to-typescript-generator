@@ -1,4 +1,4 @@
-import { AnyOf, ArraySchema, ObjectSchema } from '../../types/common.types'
+import { AnyOf, ArraySchema, ObjectSchema } from '../types/common.types'
 import { ImportCollection } from './ImportCollection'
 import { generateInterfaceKey, getComponentNameFromRef, indent, newLine } from './utilities'
 

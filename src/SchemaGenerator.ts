@@ -1,4 +1,3 @@
-import { AllOfSchema, Schema, Schemas } from '../types/common.types'
 import { InterfaceGenerator } from './common/InterfaceGenerator'
 import {
 	createSchemaFile,
@@ -7,6 +6,7 @@ import {
 	getComponentNameFromRef,
 	newLine,
 } from './common/utilities'
+import { AllOfSchema, Schema, Schemas } from './types/common.types'
 
 export class SchemaGenerator {
 	output: string

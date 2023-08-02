@@ -1,11 +1,11 @@
 import fs from 'fs'
 
-import { Components } from '../types/component.types'
-import { Endpoint, Methods, Paths } from '../types/types'
-import { createSchemaFile } from './common/utilities'
-import { EndpointGenerator } from './EndpointGenerator'
-import { ResponseComponentGenerator } from './ResponseComponentGenerator'
 import { SchemaGenerator } from './SchemaGenerator'
+import { createSchemaFile } from './common/utilities'
+import { EndpointGenerator } from './endpoint-generation/EndpointGenerator'
+import { ResponseComponentGenerator } from './endpoint-generation/ResponseComponentGenerator'
+import { Components } from './types/component.types'
+import { Endpoint, Methods, Paths } from './types/types'
 
 export class TypescriptGenerator {
 	indexFile: string = ''

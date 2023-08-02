@@ -1,7 +1,7 @@
+import { ImportCollection } from '../common/ImportCollection'
+import { InterfaceGenerator } from '../common/InterfaceGenerator'
+import { createSchemaFile, generateExportString } from '../common/utilities'
 import { ReqResponse, Responses } from '../types/component.types'
-import { ImportCollection } from './common/ImportCollection'
-import { InterfaceGenerator } from './common/InterfaceGenerator'
-import { createSchemaFile, generateExportString } from './common/utilities'
 
 export class ResponseComponentGenerator {
 	fileName = 'responses.types'

@@ -1,5 +1,5 @@
-import { ImportCollection } from './common/ImportCollection'
-import { createSchemaFile } from './common/utilities'
+import { ImportCollection } from '../common/ImportCollection'
+import { createSchemaFile } from '../common/utilities'
 
 export class EndpointFileGenerator {
 	fileString = ''

@@ -1,7 +1,7 @@
+import { InterfaceGenerator } from '../common/InterfaceGenerator'
+import { generateExportString, getComponentNameFromRef } from '../common/utilities'
 import { Components, RequestBody } from '../types/component.types'
 import { Endpoint, PathParameters } from '../types/types'
-import { InterfaceGenerator } from './common/InterfaceGenerator'
-import { generateExportLine, getComponentNameFromRef } from './common/utilities'
 import { EndpointFileGenerator } from './EndpointFileGenerator'
 import { generateExpressJsTypedRequest } from './generateTypedRequest'
 import { PathParameterGenerator } from './path-paramter/PathParameterGenerator'
@@ -37,7 +37,7 @@ export class EndpointGenerator {
 		)
 
 		this.file.createEndpointFile(outputFolderName, this.operationId)
-		this.exportLine = generateExportLine(this.operationId, ` as ${this.operationId}`)
+		this.exportLine = generateExportString(this.operationId, ` as ${this.operationId}`)
 	}
 
 	private generateParameters(parameters?: PathParameters) {
