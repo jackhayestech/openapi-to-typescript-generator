@@ -1,5 +1,5 @@
 import { AllOfSchema, Schema, Schemas } from '../types/common.types'
-import { GenerateInterface } from './common/generateInterface'
+import { InterfaceGenerator } from './common/InterfaceGenerator'
 import {
 	createSchemaFile,
 	generateExportLine,
@@ -8,7 +8,7 @@ import {
 	newLine,
 } from './common/utilities'
 
-export class SchemaGeneration {
+export class SchemaGenerator {
 	output: string
 	fileString = ''
 	fileName = 'schemas.types'
@@ -40,7 +40,7 @@ export class SchemaGeneration {
 
 		switch (schema.type) {
 			case 'object':
-				const interfaceGen = new GenerateInterface(name, schema)
+				const interfaceGen = new InterfaceGenerator(name, schema)
 				this.fileString += `export ${interfaceGen.interface}`
 				return
 			case 'number':

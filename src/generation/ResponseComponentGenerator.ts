@@ -1,9 +1,9 @@
 import { ReqResponse, Responses } from '../types/component.types'
-import { GenerateInterface } from './common/generateInterface'
-import { ImportCollection } from './common/importCollection'
+import { ImportCollection } from './common/ImportCollection'
+import { InterfaceGenerator } from './common/InterfaceGenerator'
 import { createSchemaFile, generateExportLine } from './common/utilities'
 
-export class ResponseComponent {
+export class ResponseComponentGenerator {
 	fileName = 'responses.types'
 	output: string
 	imports = new ImportCollection('./schemas.types')
@@ -31,7 +31,7 @@ export class ResponseComponent {
 	private generateResponse = (key: string, response: ReqResponse): string => {
 		const schema = response.content['application/json'].schema
 
-		const interfaceGen = new GenerateInterface(key, schema, this.imports)
+		const interfaceGen = new InterfaceGenerator(key, schema, this.imports)
 
 		return `export ${interfaceGen.interface}`
 	}

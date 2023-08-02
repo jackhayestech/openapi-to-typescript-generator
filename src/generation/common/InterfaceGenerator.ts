@@ -1,8 +1,8 @@
 import { AnyOf, ArraySchema, ObjectSchema } from '../../types/common.types'
-import { ImportCollection } from './importCollection'
+import { ImportCollection } from './ImportCollection'
 import { generateInterfaceKey, getComponentNameFromRef, indent, newLine } from './utilities'
 
-export class GenerateInterface {
+export class InterfaceGenerator {
 	name: string
 	schema: ObjectSchema
 	imports: ImportCollection

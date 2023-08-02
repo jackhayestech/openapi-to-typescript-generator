@@ -1,4 +1,4 @@
-import { ImportCollection } from './common/importCollection'
+import { ImportCollection } from './common/ImportCollection'
 import { indent, newLine } from './common/utilities'
 
 export const generateExpressJsTypedRequest = (

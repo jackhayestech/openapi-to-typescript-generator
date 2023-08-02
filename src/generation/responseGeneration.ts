@@ -1,5 +1,5 @@
 import { Response, Responses } from '../types/types'
-import { ImportCollection } from './common/importCollection'
+import { ImportCollection } from './common/ImportCollection'
 import { generateInterfaceKey, getComponentNameFromRef, newLine } from './common/utilities'
 
 export const generateEndpointResponses = (imports: ImportCollection, responses?: Responses) => {

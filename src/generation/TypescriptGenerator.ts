@@ -3,11 +3,11 @@ import fs from 'fs'
 import { Components } from '../types/component.types'
 import { Endpoint, Methods, Paths } from '../types/types'
 import { createSchemaFile } from './common/utilities'
-import { GenerateEndpoint } from './generateEndpoint'
-import { ResponseComponent } from './responseComponentGeneration'
-import { SchemaGeneration } from './schemaGeneration'
+import { EndpointGenerator } from './EndpointGenerator'
+import { ResponseComponentGenerator } from './ResponseComponentGenerator'
+import { SchemaGenerator } from './SchemaGenerator'
 
-export class GenerateTypescript {
+export class TypescriptGenerator {
 	indexFile: string = ''
 	outputFolderName: string
 	components: Components
@@ -18,10 +18,13 @@ export class GenerateTypescript {
 
 		this.createOutputDirectory()
 
-		const schemaExport = new SchemaGeneration(this.outputFolderName, components.schemas).getExport()
+		const schemaExport = new SchemaGenerator(this.outputFolderName, components.schemas).getExport()
 		this.addToIndexFile(schemaExport)
 
-		const responseComponentsExport = new ResponseComponent(this.outputFolderName, components.responses).getExport()
+		const responseComponentsExport = new ResponseComponentGenerator(
+			this.outputFolderName,
+			components.responses,
+		).getExport()
 		this.addToIndexFile(responseComponentsExport)
 
 		for (const key in paths) {
@@ -57,7 +60,7 @@ export class GenerateTypescript {
 	}
 
 	generateEndpoint(endpoint: Endpoint) {
-		const ep = new GenerateEndpoint(this.outputFolderName, this.components, endpoint)
+		const ep = new EndpointGenerator(this.outputFolderName, this.components, endpoint)
 		this.addToIndexFile(ep.exportLine)
 	}
 }

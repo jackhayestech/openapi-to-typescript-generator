@@ -43,7 +43,6 @@ export interface RequestBodyContent {
 	'application/json': { schema: Schema }
 }
 
-//TODO delete
 type ParamType = 'query' | 'path'
 
 export interface Parameter {

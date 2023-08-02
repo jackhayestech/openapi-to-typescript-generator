@@ -1,9 +1,9 @@
 import { ConvertedParameters, Ref } from '../../types/common.types'
 import { ComponentParameters, Parameter } from '../../types/component.types'
 import { PathParameters, isPathParameter } from '../../types/types'
-import { ImportCollection } from '../common/importCollection'
+import { ImportCollection } from '../common/ImportCollection'
 import { capitalizeFirstLetter, getComponentNameFromRef, newLine } from '../common/utilities'
-import { generateParamTypescript, generateParameterType } from './utils'
+import { generateParamTypescript, generateParameterType } from './utilities'
 
 export class PathParameterGenerator {
 	private convertedParameters: ConvertedParameters = {}

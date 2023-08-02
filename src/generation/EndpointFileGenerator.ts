@@ -1,7 +1,7 @@
-import { ImportCollection } from './common/importCollection'
+import { ImportCollection } from './common/ImportCollection'
 import { createSchemaFile } from './common/utilities'
 
-export class EndpointFile {
+export class EndpointFileGenerator {
 	fileString = ''
 	responsesString = ''
 	expressJsTypedRequest = ''

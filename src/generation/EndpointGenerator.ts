@@ -1,16 +1,16 @@
 import { Components, RequestBody } from '../types/component.types'
 import { Endpoint, PathParameters } from '../types/types'
-import { GenerateInterface } from './common/generateInterface'
+import { GenerateInterface } from './common/InterfaceGenerator'
 import { generateExportLine, getComponentNameFromRef } from './common/utilities'
-import { EndpointFile } from './endpointFile'
+import { EndpointFileGenerator } from './EndpointFileGenerator'
 import { generateExpressJsTypedRequest } from './generateTypedRequest'
-import { PathParameterGenerator } from './path-paramter/generatePathParameter'
+import { PathParameterGenerator } from './path-paramter/PathParameterGenerator'
 import { generateEndpointResponses } from './responseGeneration'
 
-export class GenerateEndpoint {
+export class EndpointGenerator {
 	components: Components
 	operationId: string
-	file = new EndpointFile()
+	file = new EndpointFileGenerator()
 	hasParameters = false
 	hasBody = false
 	exportLine: string
