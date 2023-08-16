@@ -19,6 +19,9 @@ export class PathParameterGenerator {
 	 */
 	parametersString = ''
 
+	pathParameter = false
+	queryParameter = false
+
 	constructor(parameters: PathParameters, schemas?: ComponentParameters) {
 		if (!schemas) {
 			throw new Error('Component params expected')
@@ -33,6 +36,7 @@ export class PathParameterGenerator {
 			if (isPathParameter(param)) {
 				this.parametersString += generateParamTypescript(param)
 				this.generateParameterObject(param)
+				this.checkParmType(param)
 			} else {
 				this.generateParameterFromRef(param)
 			}
@@ -62,6 +66,8 @@ export class PathParameterGenerator {
 		}
 
 		const param = this.parameterSchemas[name]
+
+		this.checkParmType(param)
 
 		if (!this.convertedParameters[param.in]) {
 			this.convertedParameters[param.in] = []
@@ -99,5 +105,14 @@ export class PathParameterGenerator {
 		}
 		paramString = `${paramString}}${newLine}${newLine}`
 		return paramString
+	}
+
+	private checkParmType = (param: PathParameter) => {
+		if (param.in === 'path') {
+			this.pathParameter = true
+		}
+		if (param.in === 'query') {
+			this.queryParameter = true
+		}
 	}
 }

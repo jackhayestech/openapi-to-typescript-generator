@@ -10,6 +10,11 @@ export const generateParamTypescript = ({ name, schema }: PathParameter): string
 }
 
 export const generateParameterType = (type: string, params: ParamDetail[]): string => {
+	// Express js reads open api path parameters as path
+	if (type === 'path') {
+		type = 'params'
+	}
+
 	const parameterKeys = generateParameterKeys(params)
 	const parameterType = `${indent}${type}: {${newLine}${parameterKeys}${indent}}`
 

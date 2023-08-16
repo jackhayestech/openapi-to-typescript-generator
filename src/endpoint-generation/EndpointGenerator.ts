@@ -11,7 +11,8 @@ export class EndpointGenerator {
 	components: Components
 	operationId: string
 	file = new EndpointFileGenerator()
-	hasParameters = false
+	hasPathParameters = false
+	hasQueryParameters = false
 	hasBody = false
 	exportLine: string
 
@@ -31,7 +32,8 @@ export class EndpointGenerator {
 
 		this.file.responsesString = generateEndpointResponses(responsesImports, responses)
 		this.file.expressJsTypedRequest = generateExpressJsTypedRequest(
-			this.hasParameters,
+			this.hasPathParameters,
+			this.hasQueryParameters,
 			this.hasBody,
 			typedRequestImports,
 		)
@@ -42,13 +44,12 @@ export class EndpointGenerator {
 
 	private generateParameters(parameters?: PathParameters) {
 		if (!parameters) return
-
-		this.hasParameters = true
-
 		const parametersGen = new PathParameterGenerator(parameters, this.components.parameters)
 
 		this.file.paramString = parametersGen.parametersString
 		this.file.componentImports.addMany(parametersGen.imports)
+		this.hasPathParameters = parametersGen.pathParameter
+		this.hasQueryParameters = parametersGen.queryParameter
 	}
 
 	private generateRequestBody(requestBody?: RequestBody) {
