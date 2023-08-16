@@ -1,6 +1,6 @@
 {
 	"name": "openapi-to-typescript-generator",
-	"version": "1.0.9",
+	"version": "1.0.11",
 	"description": "Converts openapi to typescript",
 	"main": "index.js",
 	"scripts": {
@@ -39,6 +39,6 @@
 		"generate": "dist/index.js"
 	},
 	"files": [
-		"dist/src"
+		"dist/*"
 	]
 }
