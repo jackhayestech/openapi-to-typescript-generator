@@ -48,7 +48,9 @@ export class SchemaGenerator {
 				this.fileString += `export ${generateType(name, schema.type)}`
 				return
 			case 'array':
-				throw new Error('need to support array')
+				const arrayGen = new InterfaceGenerator(name, schema)
+				this.fileString += `export ${arrayGen.interface}`
+				return
 		}
 	}
 

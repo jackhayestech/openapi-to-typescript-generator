@@ -4,12 +4,12 @@ import { generateInterfaceKey, getComponentNameFromRef, indent, newLine } from '
 
 export class InterfaceGenerator {
 	name: string
-	schema: ObjectSchema
+	schema: ObjectSchema | ArraySchema
 	imports: ImportCollection
 
 	interface = ''
 
-	constructor(name: string, schema: ObjectSchema, imports?: ImportCollection) {
+	constructor(name: string, schema: ObjectSchema | ArraySchema, imports?: ImportCollection) {
 		this.name = name
 		this.schema = schema
 		this.imports = imports ?? new ImportCollection('')
@@ -20,21 +20,25 @@ export class InterfaceGenerator {
 	generateInterface = () => {
 		let interfaceString = `interface ${this.name} {${newLine}`
 
-		interfaceString = this.generateObjectInterface(interfaceString)
+		if (this.schema.type === 'object') {
+			interfaceString = this.generateObjectInterface(interfaceString, this.schema)
+		} else if (this.schema.type === 'array') {
+			interfaceString = this.generateArrayInterface(interfaceString, this.schema)
+		}
 
 		interfaceString += `}${newLine}${newLine}`
 
 		this.interface = interfaceString
 	}
 
-	generateObjectInterface = (interfaceString: string) => {
-		for (const key in this.schema.properties) {
-			let optional = !this.schema?.required?.includes(key) ? '?' : ''
-			let properties = this.schema.properties[key]
+	generateObjectInterface = (interfaceString: string, schema: ObjectSchema) => {
+		for (const key in schema.properties) {
+			let optional = !schema?.required?.includes(key) ? '?' : ''
+			let properties = schema.properties[key]
 
-			if (this.schema.properties[key].type === 'array') {
+			if (schema.properties[key].type === 'array') {
 				interfaceString += this.generateArrayInterfaceKey(key, properties as ArraySchema, optional)
-			} else if (this.schema.properties[key].type === 'object') {
+			} else if (schema.properties[key].type === 'object') {
 				interfaceString += this.generateObjectInterfaceKey(key, properties as ObjectSchema, optional)
 			} else {
 				interfaceString += generateInterfaceKey(key, properties.type, optional)
@@ -44,7 +48,14 @@ export class InterfaceGenerator {
 		return interfaceString
 	}
 
-	generateArrayInterfaceKey = (key: string, { items }: ArraySchema, optional: string): string => {
+	generateArrayInterface = (interfaceString: string, schema: ArraySchema) => {
+		let properties = schema
+
+		interfaceString += this.generateArrayInterfaceKey(this.name, properties as ArraySchema)
+		return interfaceString
+	}
+
+	generateArrayInterfaceKey = (key: string, { items }: ArraySchema, optional: string = ''): string => {
 		let item = ''
 
 		if ('type' in items) {

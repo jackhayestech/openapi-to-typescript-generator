@@ -160,3 +160,15 @@ components:
     EventUuid:
       type: string
       format: uuid
+    CharacterBaseAttributes:
+      type: array
+      items:
+        $ref: '#/components/schemas/CharacterBaseAttribute'
+        
+    CharacterBaseAttribute:
+      type: object
+      properties:
+        attributeId:
+          type: string
+        value:
+          type: number
