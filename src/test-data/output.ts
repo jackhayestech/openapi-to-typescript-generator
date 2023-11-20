@@ -59,9 +59,9 @@ export interface Responses {
 	default: ServerErrorResponse
 }
 
-interface TypedRequest <T extends Query,U> extends Express.Request{
-	query: T
-	body: U
+interface TypedRequest <Q extends Query,B> extends Express.Request{
+	query: Q
+	body: B
 }
 
 export type Request = TypedRequest<Parameters['query'],RequestBody>`
@@ -70,10 +70,10 @@ export const getEventFile = `import { SingleEventResponse, ServerErrorResponse }
 
 import { EventUuid as EventUuid } from './schemas.types'
 
-import { Query } from 'express-serve-static-core'
+import { Params } from 'express-serve-static-core'
 
 interface Parameters {
-	path: {
+	params: {
 		eventUuid: EventUuid
 	}
 }
@@ -83,20 +83,20 @@ export interface Responses {
 	default: ServerErrorResponse
 }
 
-interface TypedRequest <T extends Query> extends Express.Request{
-	query: T
+interface TypedRequest <P extends Params> extends Express.Request{
+	params: P
 }
 
-export type Request = TypedRequest<Parameters['query']>`
+export type Request = TypedRequest<Parameters['params']>`
 
 export const getUserEventsFile = `import { MultipleEventResponse, ServerErrorResponse } from './responses.types'
 
 import { UserUuid as PathUserUuid } from './schemas.types'
 
-import { Query } from 'express-serve-static-core'
+import { Params } from 'express-serve-static-core'
 
 interface Parameters {
-	path: {
+	params: {
 		userUuid: PathUserUuid
 	}
 }
@@ -106,11 +106,11 @@ export interface Responses {
 	default: ServerErrorResponse
 }
 
-interface TypedRequest <T extends Query> extends Express.Request{
-	query: T
+interface TypedRequest <P extends Params> extends Express.Request{
+	params: P
 }
 
-export type Request = TypedRequest<Parameters['query']>`
+export type Request = TypedRequest<Parameters['params']>`
 
 export const indexFile = `export *  from './schemas.types'
 export *  from './responses.types'
