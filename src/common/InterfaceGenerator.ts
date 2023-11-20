@@ -20,6 +20,14 @@ export class InterfaceGenerator {
 	generateInterface = () => {
 		let interfaceString = `interface ${this.name} {${newLine}`
 
+		interfaceString = this.generateObjectInterface(interfaceString)
+
+		interfaceString += `}${newLine}${newLine}`
+
+		this.interface = interfaceString
+	}
+
+	generateObjectInterface = (interfaceString: string) => {
 		for (const key in this.schema.properties) {
 			let optional = !this.schema?.required?.includes(key) ? '?' : ''
 			let properties = this.schema.properties[key]
@@ -33,9 +41,7 @@ export class InterfaceGenerator {
 			}
 		}
 
-		interfaceString += `}${newLine}${newLine}`
-
-		this.interface = interfaceString
+		return interfaceString
 	}
 
 	generateArrayInterfaceKey = (key: string, { items }: ArraySchema, optional: string): string => {
