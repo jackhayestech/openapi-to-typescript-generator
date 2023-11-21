@@ -11,6 +11,7 @@ type SchemaArray = 'array'
 export interface PrimitiveSchema {
 	type: SchemaString | SchemaNumber
 	format?: string
+	enum?: string[]
 }
 
 export interface ObjectSchema {

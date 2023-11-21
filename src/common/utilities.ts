@@ -1,11 +1,22 @@
 import { writeFile } from 'fs'
-import { Primitive } from '../types/common.types'
+import { Primitive, PrimitiveSchema } from '../types/common.types'
 
 export const generateInterfaceKey = (key: string, value: Primitive, optional: string): string =>
 	`${indent}${key}${optional}: ${value}${newLine}`
 
 export const generateType = (key: string, value: Primitive): string =>
 	`type ${capitalizeFirstLetter(key)} = ${value}${newLine}`
+
+export const generateEnumString = (key: string, schema: PrimitiveSchema): string => {
+	let enums = ''
+	schema.enum?.map((s, i) => {
+		enums += `'${s}'`
+		if (i !== schema.enum!.length - 1) {
+			enums += ' | '
+		}
+	})
+	return `type ${capitalizeFirstLetter(key)} = ${enums}${newLine}`
+}
 
 export const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1)
 

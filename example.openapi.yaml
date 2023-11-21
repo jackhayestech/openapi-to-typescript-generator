@@ -163,8 +163,7 @@ components:
     CharacterBaseAttributes:
       type: array
       items:
-        $ref: '#/components/schemas/CharacterBaseAttribute'
-        
+        $ref: '#/components/schemas/CharacterBaseAttribute'        
     CharacterBaseAttribute:
       type: object
       properties:
@@ -172,3 +171,9 @@ components:
           type: string
         value:
           type: number
+    EnumTest:
+      type: string
+      enum:
+        - enumOne
+        - enumTwo
+          

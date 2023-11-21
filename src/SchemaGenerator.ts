@@ -1,6 +1,7 @@
 import { InterfaceGenerator } from './common/InterfaceGenerator'
 import {
 	createSchemaFile,
+	generateEnumString,
 	generateExportString,
 	generateType,
 	getComponentNameFromRef,
@@ -45,6 +46,10 @@ export class SchemaGenerator {
 				return
 			case 'number':
 			case 'string':
+				if (schema.type === 'string' && schema.enum) {
+					this.fileString += `export ${generateEnumString(name, schema)}${newLine}`
+					return
+				}
 				this.fileString += `export ${generateType(name, schema.type)}`
 				return
 			case 'array':

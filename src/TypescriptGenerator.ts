@@ -17,7 +17,6 @@ export class TypescriptGenerator {
 		this.components = components
 
 		this.createOutputDirectory()
-
 		const schemaGen = new SchemaGenerator(this.outputFolderName, components.schemas)
 		this.addExportToIndexFile(schemaGen.getExportString())
 

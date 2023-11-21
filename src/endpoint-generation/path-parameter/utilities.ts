@@ -1,10 +1,15 @@
-import { generateType, indent, newLine } from '../../common/utilities'
+import { generateEnumString, generateType, indent, newLine } from '../../common/utilities'
 import { ParamDetail } from '../../types/common.types'
 import { PathParameter } from '../../types/endpoint.types'
 
 export const generateParamTypescript = ({ name, schema }: PathParameter): string => {
 	if ('$ref' in schema) return ''
-	if ('type' in schema) return `export ${generateType(name, schema.type)}${newLine}`
+	if ('type' in schema) {
+		if (schema.type === 'string' && schema.enum) {
+			return `export ${generateEnumString(name, schema)}${newLine}`
+		}
+		return `export ${generateType(name, schema.type)}${newLine}`
+	}
 
 	throw new Error('Parameter allof not supported')
 }
