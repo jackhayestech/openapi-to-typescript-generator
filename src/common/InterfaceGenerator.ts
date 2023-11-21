@@ -1,6 +1,6 @@
 import { AnyOf, ArraySchema, ObjectSchema } from '../types/common.types'
 import { ImportCollection } from './ImportCollection'
-import { generateInterfaceKey, getComponentNameFromRef, indent, newLine } from './utilities'
+import { generateInterfaceKey, getComponentNameFromRef, indent, lowercaseFirstLetter, newLine } from './utilities'
 
 export class InterfaceGenerator {
 	name: string
@@ -40,6 +40,9 @@ export class InterfaceGenerator {
 				interfaceString += this.generateArrayInterfaceKey(key, properties as ArraySchema, optional)
 			} else if (schema.properties[key].type === 'object') {
 				interfaceString += this.generateObjectInterfaceKey(key, properties as ObjectSchema, optional)
+			} else if ('$ref' in properties) {
+				const ref = this.createFromRef(properties['$ref'] as string)
+				interfaceString += `${indent}${lowercaseFirstLetter(ref)}: ${ref}${newLine}`
 			} else {
 				interfaceString += generateInterfaceKey(key, properties.type, optional)
 			}

@@ -171,6 +171,12 @@ components:
           type: string
         value:
           type: number
+    Attribute:
+      type: object
+      additionalProperties: false
+      properties:
+        major: 
+          $ref: '#/components/schemas/EnumTest'
     EnumTest:
       type: string
       enum:

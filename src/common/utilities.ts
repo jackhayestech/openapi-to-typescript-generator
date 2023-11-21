@@ -20,6 +20,8 @@ export const generateEnumString = (key: string, schema: PrimitiveSchema): string
 
 export const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1)
 
+export const lowercaseFirstLetter = (string: string) => string.charAt(0).toLocaleLowerCase() + string.slice(1)
+
 export const getComponentNameFromRef = (ref: string): string => ref.split('/').slice(-1)[0]
 
 export const generateExportString = (fileName: string, asString = '') =>
