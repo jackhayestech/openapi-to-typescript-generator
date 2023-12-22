@@ -5,7 +5,7 @@ import { ComponentParameters } from '../../types/component.types'
 import { PathParameter, PathParameters, isPathParameter } from '../../types/endpoint.types'
 import { generateParamTypescript, generateParameterType } from './utilities'
 
-export class PathParameterGenerator {
+export class ParameterGenerator {
 	private convertedParameters: ConvertedParameters = {}
 	private schemaImports = new ImportCollection('./schemas.types')
 	private parameterSchemas: ComponentParameters

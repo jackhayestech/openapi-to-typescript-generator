@@ -1,6 +1,6 @@
 import { ImportCollection } from '../common/ImportCollection'
 import { InterfaceGenerator } from '../common/InterfaceGenerator'
-import { createSchemaFile, generateExportString } from '../common/utilities'
+import { createSchemaFile, generateExportString, newLine } from '../common/utilities'
 import { ReqResponse, Responses } from '../types/component.types'
 
 export class ResponseComponentGenerator {
@@ -20,10 +20,11 @@ export class ResponseComponentGenerator {
 		let fileString = ''
 
 		for (const key in responses) {
-			fileString += this.generateResponse(key, responses[key])
+			fileString += this.getExpressExportString(key)
+			fileString += this.generateResponse(`I${key}`, responses[key])
 		}
 
-		fileString = `${this.imports.generateImportString()}${fileString}`
+		fileString = `import { ResponseData } from '@jh-tech/response-object'${newLine}${this.imports.generateImportString()}${fileString}`
 
 		createSchemaFile(`${this.output}/${this.fileName}.ts`, fileString)
 	}
@@ -33,10 +34,14 @@ export class ResponseComponentGenerator {
 
 		const interfaceGen = new InterfaceGenerator(key, schema, this.imports)
 
-		return `export ${interfaceGen.interface}`
+		return `${interfaceGen.interface}`
 	}
 
 	getExportString() {
 		return generateExportString(this.fileName)
+	}
+
+	getExpressExportString(name: string) {
+		return `export type ${name} = ResponseData<I${name}>${newLine}${newLine}`
 	}
 }

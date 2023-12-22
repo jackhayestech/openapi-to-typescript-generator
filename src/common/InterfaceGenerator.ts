@@ -18,16 +18,19 @@ export class InterfaceGenerator {
 	}
 
 	generateInterface = () => {
-		let interfaceString = `interface ${this.name} {${newLine}`
+		let interfaceString = ''
 
 		if (this.schema.type === 'object') {
+			interfaceString = `interface ${this.name} {${newLine}`
 			interfaceString = this.generateObjectInterface(interfaceString, this.schema)
+			interfaceString += `}`
 		} else if (this.schema.type === 'array') {
-			interfaceString = this.generateArrayInterface(interfaceString, this.schema)
+			interfaceString = `type ${this.name} = `
+			interfaceString += this.generateArrayInterfaceKey(this.name, this.schema as ArraySchema)
+			//this.generateArrayInterface(interfaceString, this.schema)
+			// console.log(this.generateArrayInterface(interfaceString, this.schema))
 		}
-
-		interfaceString += `}${newLine}${newLine}`
-
+		interfaceString += `${newLine}${newLine}`
 		this.interface = interfaceString
 	}
 
@@ -37,7 +40,11 @@ export class InterfaceGenerator {
 			let properties = schema.properties[key]
 
 			if (schema.properties[key].type === 'array') {
-				interfaceString += this.generateArrayInterfaceKey(key, properties as ArraySchema, optional)
+				interfaceString += `${indent}${key}${optional}: ${this.generateArrayInterfaceKey(
+					key,
+					properties as ArraySchema,
+					optional,
+				)}`
 			} else if (schema.properties[key].type === 'object') {
 				interfaceString += this.generateObjectInterfaceKey(key, properties as ObjectSchema, optional)
 			} else if ('$ref' in properties) {
@@ -55,6 +62,7 @@ export class InterfaceGenerator {
 		let properties = schema
 
 		interfaceString += this.generateArrayInterfaceKey(this.name, properties as ArraySchema)
+
 		return interfaceString
 	}
 
@@ -71,7 +79,7 @@ export class InterfaceGenerator {
 			throw new Error('Array type not supported')
 		}
 
-		return `${indent}${key}${optional}: ${item}${newLine}`
+		return `${item}${newLine}`
 	}
 
 	generateObjectInterfaceKey = (key: string, schema: ObjectSchema, optional: string) => {

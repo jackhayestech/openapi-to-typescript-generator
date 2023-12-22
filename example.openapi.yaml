@@ -31,6 +31,7 @@ paths:
       operationId: GetUserEvents
       parameters:
         - $ref: '#/components/parameters/PathUserUuid'
+        - $ref: '#/components/parameters/QueryTraitIds'
       description: Returns a list of events the user owns
       responses:
         '200':
@@ -58,6 +59,11 @@ components:
         $ref: '#/components/schemas/EventUuid'
       required: true
       description: The events uuid the request is trying to retrieve
+    QueryTraitIds:
+      in: query
+      name: traitIds
+      schema:
+         $ref: '#/components/schemas/TraitIds'
   requestBodies:
     CreateEvent:
       description: Creates a new event.
@@ -182,4 +188,8 @@ components:
       enum:
         - enumOne
         - enumTwo
-          
+    TraitIds:
+      type: array
+      items:
+        type: string
+        format: uuid      
