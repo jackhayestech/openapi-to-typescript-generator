@@ -32,9 +32,11 @@ export interface ArraySchemaOneType {
 	}
 }
 
-export interface AnyOf {
-	type: Primitive
-}
+export type AnyOf =
+	| {
+			type: Primitive
+	  }
+	| Ref
 
 export interface ArraySchemaMultipleTypes {
 	type: SchemaArray

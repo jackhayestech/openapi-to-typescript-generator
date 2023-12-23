@@ -101,15 +101,20 @@ export class InterfaceGenerator {
 	}
 
 	createAnyOf = (anyOf: AnyOf[]) => {
-		let item = ''
+		let item = '('
 
 		anyOf.forEach((type, i) => {
-			item += ` ${type.type}[]`
+			if ('$ref' in type) {
+				item += getComponentNameFromRef(type.$ref)
+			} else {
+				item += type.type
+			}
 			if (i !== anyOf.length - 1) {
 				item += ' | '
 			}
 		})
 
+		item += `)[]`
 		return item
 	}
 }
