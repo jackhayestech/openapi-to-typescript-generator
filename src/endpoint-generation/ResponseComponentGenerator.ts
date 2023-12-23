@@ -21,7 +21,8 @@ export class ResponseComponentGenerator {
 
 		for (const key in responses) {
 			fileString += this.getExpressExportString(key)
-			fileString += this.generateResponse(`I${key}`, responses[key])
+			fileString += 'export '
+			fileString += this.generateResponse(`${key}Data`, responses[key])
 		}
 
 		fileString = `import { ResponseData } from '@jh-tech/response-object'${newLine}${this.imports.generateImportString()}${fileString}`
@@ -42,6 +43,6 @@ export class ResponseComponentGenerator {
 	}
 
 	getExpressExportString(name: string) {
-		return `export type ${name} = ResponseData<I${name}>${newLine}${newLine}`
+		return `export type ${name} = ResponseData<${name}Data>${newLine}${newLine}`
 	}
 }
