@@ -7,7 +7,7 @@ import {
 	getComponentNameFromRef,
 	newLine,
 } from './common/utilities'
-import { AllOfSchema, Schema, Schemas } from './types/common.types'
+import { AllOfSchema, ObjectSchema, Ref, Schema, Schemas } from './types/common.types'
 
 export class SchemaGenerator {
 	output: string
@@ -60,16 +60,25 @@ export class SchemaGenerator {
 	}
 
 	allOfSchemaGenerate = (name: string, { allOf }: AllOfSchema): string => {
+		if (allOf.some(({ $ref }) => !$ref)) {
+			if (allOf.length !== 2) {
+				throw Error('All of extends type should only have two elements')
+			}
+			const ref = allOf.find(({ $ref }) => $ref !== undefined) as Ref
+			const obj = allOf.find(({ $ref }) => !$ref) as ObjectSchema
+			return this.allOfExtends(name, ref.$ref, obj)
+		}
+
 		let schemaString = `export type ${name} = `
 
 		allOf.forEach(({ $ref }, i) => {
 			if ($ref) {
-				schemaString += `${getComponentNameFromRef($ref)}`
+				schemaString += getComponentNameFromRef($ref)
 				if (i !== allOf.length - 1) {
 					schemaString += ' | '
 				}
 			} else {
-				throw new Error('Inline interface not supported for all of')
+				throw Error('TODO allOfSchemaGenerate')
 			}
 		})
 
@@ -80,5 +89,16 @@ export class SchemaGenerator {
 
 	getExportString() {
 		return generateExportString(this.fileName)
+	}
+
+	allOfExtends = (name: string, ref: string, obj: ObjectSchema): string => {
+		const refName = getComponentNameFromRef(ref)
+		let schemaString = `export interface ${name} extends ${refName} {${newLine}`
+
+		const interfaceGen = new InterfaceGenerator(name, obj)
+		schemaString += interfaceGen.generateObjectInterface(obj)
+		schemaString += `}${newLine}${newLine}`
+
+		return schemaString
 	}
 }

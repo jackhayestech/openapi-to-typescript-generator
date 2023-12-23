@@ -45,8 +45,8 @@ export interface ArraySchemaMultipleTypes {
 
 export type ArraySchema = ArraySchemaMultipleTypes | ArraySchemaOneType
 
-export interface AllOfSchema {
-	allOf: Ref[]
+export type AllOfSchema = {
+	allOf: (Ref | ObjectSchema)[]
 }
 
 export interface Ref {

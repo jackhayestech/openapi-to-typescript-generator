@@ -192,4 +192,41 @@ components:
       type: array
       items:
         type: string
-        format: uuid      
+        format: uuid
+    
+    BenefitType:
+      type: string
+      enum:
+        - attribute
+        - skill
+        - skillImprovement
+        - mitigation
+        - trait
+    BaseBenefit:
+      type: object
+      required:
+        - id
+        - type
+      properties:
+        id:
+          type: string
+          format: uuid
+        type: 
+          $ref: '#/components/schemas/BenefitType'
+    SkillImprovementBenefit:
+      allOf:
+        - $ref: '#/components/schemas/BaseBenefit'
+        - type: object
+          required:
+            - skillId
+            - type
+          properties:
+            skillId:
+              type: string
+              format: uuid
+            type:
+              $ref: '#/components/schemas/SkillImprovementBenefitType'
+    SkillImprovementBenefitType:
+      type: string
+      enum:
+        - skillImprovement

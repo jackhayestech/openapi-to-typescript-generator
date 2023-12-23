@@ -22,19 +22,18 @@ export class InterfaceGenerator {
 
 		if (this.schema.type === 'object') {
 			interfaceString = `interface ${this.name} {${newLine}`
-			interfaceString = this.generateObjectInterface(interfaceString, this.schema)
+			interfaceString += this.generateObjectInterface(this.schema)
 			interfaceString += `}`
 		} else if (this.schema.type === 'array') {
 			interfaceString = `type ${this.name} = `
 			interfaceString += this.generateArrayInterfaceKey(this.name, this.schema as ArraySchema)
-			//this.generateArrayInterface(interfaceString, this.schema)
-			// console.log(this.generateArrayInterface(interfaceString, this.schema))
 		}
 		interfaceString += `${newLine}${newLine}`
 		this.interface = interfaceString
 	}
 
-	generateObjectInterface = (interfaceString: string, schema: ObjectSchema) => {
+	generateObjectInterface = (schema: ObjectSchema) => {
+		let interfaceString = ''
 		for (const key in schema.properties) {
 			let optional = !schema?.required?.includes(key) ? '?' : ''
 			let properties = schema.properties[key]
