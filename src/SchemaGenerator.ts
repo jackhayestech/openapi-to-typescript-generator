@@ -3,6 +3,7 @@ import { parse } from 'yaml'
 import { InterfaceGenerator } from './common/InterfaceGenerator'
 import {
 	createSchemaFile,
+	filterDuplicates,
 	generateEnumString,
 	generateExportString,
 	generateType,
@@ -15,6 +16,7 @@ export class SchemaGenerator {
 	output: string
 	fileString = ''
 	fileName = 'schemas.types'
+	externalFileImports: string[] = []
 
 	constructor(output: string, schemas?: Schemas) {
 		this.output = output
@@ -27,6 +29,10 @@ export class SchemaGenerator {
 		for (const key in schemas) {
 			this.generateSchema(key, schemas[key])
 		}
+
+		const externals = filterDuplicates(this.externalFileImports)
+
+		externals.map((e) => this.generateSchema(getComponentNameFromRef(e), this.getSchemaFromExternalFile(e)))
 
 		createSchemaFile(`${this.output}/${this.fileName}.ts`, this.fileString)
 	}
@@ -50,6 +56,7 @@ export class SchemaGenerator {
 			case 'object':
 				const interfaceGen = new InterfaceGenerator(name, schema)
 				this.fileString += `export ${interfaceGen.interface}`
+				this.externalFileImports = [...this.externalFileImports, ...interfaceGen.externalFileImports]
 				return
 			case 'number':
 			case 'string':
@@ -116,12 +123,11 @@ export class SchemaGenerator {
 
 		const file = fs.readFileSync(fileName, 'utf8')
 		let data = parse(file)
-
+		let current
 		for (let i = 0; i < componentPath.length; i++) {
-			const current = componentPath[i]
+			current = componentPath[i]
 			data = data[current]
 		}
-
 		return data
 	}
 }

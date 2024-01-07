@@ -35,3 +35,5 @@ export const createSchemaFile = (fileName: string, fileString: string) => {
 		if (error) console.log(error)
 	})
 }
+
+export const filterDuplicates = (strings: string[]): string[] => Array.from(new Set(strings))

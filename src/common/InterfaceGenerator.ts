@@ -6,6 +6,7 @@ export class InterfaceGenerator {
 	name: string
 	schema: ObjectSchema | ArraySchema
 	imports: ImportCollection
+	externalFileImports: string[] = []
 
 	interface = ''
 
@@ -94,6 +95,9 @@ export class InterfaceGenerator {
 	}
 
 	createFromRef = (ref: string) => {
+		if (ref[0] !== '#') {
+			this.externalFileImports.push(ref)
+		}
 		const value = getComponentNameFromRef(ref)
 		this.imports.add(value)
 
