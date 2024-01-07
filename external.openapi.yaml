@@ -1,0 +1,14 @@
+CreateEventData:
+    type: object
+    additionalProperties: false
+    properties:
+      name:
+        type: string
+      dateTime:
+        type: string
+      location:
+        type: string
+      description:
+        type: string
+    required:
+      - name

@@ -1,0 +1,280 @@
+openapi: 3.0.1
+info:
+  title: Notes backend api
+  version: 1.0.0
+paths:
+  /event:
+    post:
+      operationId: CreateEvent
+      parameters:
+        - $ref: '#/components/parameters/QueryUserUuid'
+      requestBody:
+        $ref: '#/components/requestBodies/CreateEvent'
+      responses:
+        '200':
+          $ref: '#/components/responses/SingleEventResponse'
+        'default':
+          $ref: '#/components/responses/ServerErrorResponse'
+  /event/{eventUuid}:
+    get:
+      operationId: GetEvent
+      parameters:
+        - $ref: '#/components/parameters/EventUuid'
+      description: Returns a created event.
+      responses:
+        '200':
+          $ref: '#/components/responses/SingleEventResponse'
+        'default':
+          $ref: '#/components/responses/ServerErrorResponse'
+  /user-events/{userUuid}:
+    get:
+      operationId: GetUserEvents
+      parameters:
+        - $ref: '#/components/parameters/PathUserUuid'
+        - $ref: '#/components/parameters/QueryTraitIds'
+      description: Returns a list of events the user owns
+      responses:
+        '200':
+          $ref: '#/components/responses/MultipleEventResponse'
+        'default':
+          $ref: '#/components/responses/ServerErrorResponse'
+components:
+  parameters:
+    QueryUserUuid:
+      in: query
+      name: userUuid
+      schema:
+        $ref: '#/components/schemas/UserUuid'
+      required: true
+    PathUserUuid:
+      in: path
+      name: userUuid
+      schema:
+        $ref: '#/components/schemas/UserUuid'
+      required: true
+    EventUuid:
+      in: path
+      name: eventUuid
+      schema:
+        $ref: '#/components/schemas/EventUuid'
+      required: true
+      description: The events uuid the request is trying to retrieve
+    QueryTraitIds:
+      in: query
+      name: traitIds
+      schema:
+         $ref: '#/components/schemas/TraitIds'
+  requestBodies:
+    CreateEvent:
+      description: Creates a new event.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - 'data'
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/CreateEventData'
+  responses:
+    ServerErrorResponse:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            additionalProperties: false
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServerError'
+    SingleEventResponse:
+      description: Returns a single event
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/Event'
+    MultipleEventResponse:
+      description: Returns multiple events
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+  schemas:
+    ServerError:
+      additionalProperties: false
+      type: object
+      properties:
+        id:
+          type: string
+        code:
+          type: string
+        status:
+          type: number
+        title:
+          type: string
+        detail:
+          type: string
+        meta:
+          type: object
+    CreateEventData:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+        dateTime:
+          type: string
+        location:
+          type: string
+        description:
+          type: string
+      required:
+        - name
+    EventDbData:
+      type: object
+      additionalProperties: false
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        owners:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserUuid'
+      required:
+        - owners
+        - uuid
+    Event:
+      allOf:
+        - $ref: '#/components/schemas/CreateEventData'
+        - $ref: '#/components/schemas/EventDbData'
+    UserUuid:
+      type: string
+      format: uuid
+    EventUuid:
+      type: string
+      format: uuid
+    CharacterBaseAttributes:
+      type: array
+      items:
+        $ref: '#/components/schemas/CharacterBaseAttribute'        
+    CharacterBaseAttribute:
+      type: object
+      properties:
+        attributeId:
+          type: string
+        value:
+          type: number
+    Attribute:
+      type: object
+      additionalProperties: false
+      properties:
+        major: 
+          $ref: '#/components/schemas/EnumTest'
+    EnumTest:
+      type: string
+      enum:
+        - enumOne
+        - enumTwo
+    TraitIds:
+      type: array
+      items:
+        type: string
+        format: uuid
+    Trait:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - benefits
+        - tags
+      properties:
+        id:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        name:
+          type: string
+        description:
+          type: string
+        benefits:
+          type: array
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/SkillImprovementBenefit'
+              - $ref: '#/components/schemas/MitigationBenefit'
+    BenefitType:
+      type: string
+      enum:
+        - attribute
+        - skill
+        - skillImprovement
+        - mitigation
+        - trait
+    BaseBenefit:
+      type: object
+      required:
+        - id
+        - type
+      properties:
+        id:
+          type: string
+          format: uuid
+        type: 
+          $ref: '#/components/schemas/BenefitType'
+    SkillImprovementBenefit:
+      allOf:
+        - $ref: '#/components/schemas/BaseBenefit'
+        - type: object
+          required:
+            - skillId
+            - type
+          properties:
+            skillId:
+              type: string
+              format: uuid
+            type:
+              $ref: '#/components/schemas/SkillImprovementBenefitType'
+    SkillImprovementBenefitType:
+      type: string
+      enum:
+        - skillImprovement
+    MitigationBenefit:
+      allOf:
+        - $ref: '#/components/schemas/BaseBenefit'
+        - type: object
+          required:
+            - skillId
+            - type
+          properties:
+            skillId:
+              type: string
+              format: uuid
+            requirements:
+              nullable: true
+              type: array
+              items:
+                type: string
+                format: uuid
+            type:
+              $ref: '#/components/schemas/MitigationBenefitType'
+    MitigationBenefitType:
+      type: string
+      enum:
+        - mitigation
+    

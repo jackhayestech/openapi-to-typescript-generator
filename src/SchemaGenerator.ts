@@ -1,3 +1,5 @@
+import fs from 'fs'
+import { parse } from 'yaml'
 import { InterfaceGenerator } from './common/InterfaceGenerator'
 import {
 	createSchemaFile,
@@ -30,6 +32,11 @@ export class SchemaGenerator {
 	}
 
 	private generateSchema(name: string, schema: Schema) {
+		// Import from other file
+		if ('$ref' in schema) {
+			schema = this.getSchemaFromExternalFile(schema.$ref as string)
+		}
+
 		if ('allOf' in schema) {
 			this.fileString += this.allOfSchemaGenerate(name, schema)
 			return
@@ -100,5 +107,21 @@ export class SchemaGenerator {
 		schemaString += `}${newLine}${newLine}`
 
 		return schemaString
+	}
+
+	getSchemaFromExternalFile = (ref: string) => {
+		const splitString = ref.split('#')
+		const fileName = splitString[0]
+		const componentPath = splitString[1].split('/').filter((s) => s != '')
+
+		const file = fs.readFileSync(fileName, 'utf8')
+		let data = parse(file)
+
+		for (let i = 0; i < componentPath.length; i++) {
+			const current = componentPath[i]
+			data = data[current]
+		}
+
+		return data
 	}
 }
