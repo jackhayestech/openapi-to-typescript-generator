@@ -12,12 +12,12 @@ export class TypescriptGenerator {
 	outputFolderName: string
 	components: Components
 
-	constructor(paths: Paths, components: Components, output: string) {
+	constructor(paths: Paths, components: Components, output: string, fileLocation: string) {
 		this.outputFolderName = output
 		this.components = components
 
 		this.createOutputDirectory()
-		const schemaGen = new SchemaGenerator(this.outputFolderName, components.schemas)
+		const schemaGen = new SchemaGenerator(this.outputFolderName, fileLocation, components.schemas)
 		this.addExportToIndexFile(schemaGen.getExportString())
 
 		const responseComponentsGen = new ResponseComponentGenerator(this.outputFolderName, components.responses)

@@ -14,12 +14,14 @@ import { AllOfSchema, ObjectSchema, Ref, Schema, Schemas } from './types/common.
 
 export class SchemaGenerator {
 	output: string
+	fileLocation: string
 	fileString = ''
 	fileName = 'schemas.types'
 	externalFileImports: string[] = []
 
-	constructor(output: string, schemas?: Schemas) {
+	constructor(output: string, fileLocation: string, schemas?: Schemas) {
 		this.output = output
+		this.fileLocation = fileLocation
 		this.generate(schemas)
 	}
 
@@ -122,7 +124,7 @@ export class SchemaGenerator {
 		const fileName = splitString[0]
 		const componentPath = splitString[1].split('/').filter((s) => s != '')
 
-		const file = fs.readFileSync(fileName, 'utf8')
+		const file = fs.readFileSync(`${this.fileLocation}/${fileName}`, 'utf8')
 		let data = parse(file)
 		let current
 		for (let i = 0; i < componentPath.length; i++) {

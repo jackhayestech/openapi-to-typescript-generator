@@ -11,4 +11,7 @@ const output = getFlag(process.argv, '-o') as string
 const file = fs.readFileSync(fileName, 'utf8')
 const { paths, components } = parse(file)
 
-new TypescriptGenerator(paths, components, output)
+const lastSlashIndex: number = fileName.lastIndexOf('/')
+const pathBeforeLastSlash: string = fileName.substring(0, lastSlashIndex)
+
+new TypescriptGenerator(paths, components, output, pathBeforeLastSlash)

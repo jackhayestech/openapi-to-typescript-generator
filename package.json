@@ -7,7 +7,7 @@
 		"test": "jest",
 		"build": "npx tsc",
 		"start": "npx tsc && node ./dist/index.js",
-		"example": "npm run start -- -i example.openapi.yaml -o generated"
+		"example": "npm run start -- -i ./data/example.openapi.yaml -o generated"
 	},
 	"author": "",
 	"license": "ISC",
