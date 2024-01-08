@@ -10,7 +10,7 @@ paths:
         $ref: '#/components/requestBodies/CreateEvent'
       responses:
         '200':
-          $ref: '#/components/responses/SingleEventResponse'
+          $ref: 'external.openapi.yaml#/components/schemas/CreateEventData'
         'default':
           $ref: '#/components/responses/ServerErrorResponse'
 components:
@@ -47,7 +47,6 @@ components:
             type: object
             properties:
               data:
-                type: object
                 $ref: '#/components/schemas/Event'
   schemas:
     ServerError:
@@ -67,6 +66,8 @@ components:
         meta:
           type: object
     Event:
-      $ref: 'external.openapi.yaml#/components/schemas/CreateEventData'
+      type: array
+      items:
+        $ref: 'external.openapi.yaml#/components/schemas/CreateEventData'
     EventTwo:
       $ref: 'external.openapi.yaml#/components/schemas/CreateEventDataTwo'

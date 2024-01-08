@@ -69,6 +69,7 @@ export class SchemaGenerator {
 			case 'array':
 				const arrayGen = new InterfaceGenerator(name, schema)
 				this.fileString += `export ${arrayGen.interface}`
+				this.externalFileImports = [...this.externalFileImports, ...arrayGen.externalFileImports]
 				return
 		}
 	}
