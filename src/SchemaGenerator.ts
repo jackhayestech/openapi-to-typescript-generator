@@ -3,7 +3,6 @@ import { parse } from 'yaml'
 import { InterfaceGenerator } from './common/InterfaceGenerator'
 import {
 	createSchemaFile,
-	filterDuplicates,
 	generateEnumString,
 	generateExportString,
 	generateType,
@@ -32,10 +31,13 @@ export class SchemaGenerator {
 			this.generateSchema(key, schemas[key])
 		}
 
-		const externals = filterDuplicates(this.externalFileImports)
+		let i = 0
 
-		externals.map((e) => this.generateSchema(getComponentNameFromRef(e), this.getSchemaFromExternalFile(e)))
-
+		while (i < this.externalFileImports.length) {
+			const e = this.externalFileImports[i]
+			this.generateSchema(getComponentNameFromRef(e), this.getSchemaFromExternalFile(e))
+			i++
+		}
 		createSchemaFile(`${this.output}/${this.fileName}.ts`, this.fileString)
 	}
 
@@ -58,7 +60,7 @@ export class SchemaGenerator {
 			case 'object':
 				const interfaceGen = new InterfaceGenerator(name, schema)
 				this.fileString += `export ${interfaceGen.interface}`
-				this.externalFileImports = [...this.externalFileImports, ...interfaceGen.externalFileImports]
+				this.addToExternals(interfaceGen.externalFileImports)
 				return
 			case 'number':
 			case 'string':
@@ -71,9 +73,17 @@ export class SchemaGenerator {
 			case 'array':
 				const arrayGen = new InterfaceGenerator(name, schema)
 				this.fileString += `export ${arrayGen.interface}`
-				this.externalFileImports = [...this.externalFileImports, ...arrayGen.externalFileImports]
+				this.addToExternals(arrayGen.externalFileImports)
 				return
 		}
+	}
+
+	addToExternals = (newImports: string[]) => {
+		newImports.map((nI) => {
+			if (!this.externalFileImports.includes(nI)) {
+				this.externalFileImports.push(nI)
+			}
+		})
 	}
 
 	allOfSchemaGenerate = (name: string, { allOf }: AllOfSchema): string => {
