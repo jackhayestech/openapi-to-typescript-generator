@@ -1,0 +1,30 @@
+components:
+  schemas:
+    Attribute:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - major
+        - medium
+        - minor
+        - description
+      properties:
+        id: 
+          type: string
+          format: uuid
+        major: 
+          $ref: 'external2.openapi.yaml#/components/schemas/MajorAttributes'
+        medium: 
+          $ref: 'external2.openapi.yaml#/components/schemas/MediumAttributes'
+        minor: 
+          type: string
+        description:
+          type: string
+    MajorAttributes:
+      type: string
+      enum: [body, mind]
+    MediumAttributes:
+      type: string
+      enum: [physicality, deftness, charisma, intelligence]
+

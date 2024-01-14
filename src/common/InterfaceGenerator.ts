@@ -1,3 +1,4 @@
+import { ExternalFileImports } from '../SchemaGenerator'
 import { AnyOf, ArraySchema, ObjectSchema } from '../types/common.types'
 import { ImportCollection } from './ImportCollection'
 import { generateInterfaceKey, getComponentNameFromRef, indent, newLine } from './utilities'
@@ -6,14 +7,20 @@ export class InterfaceGenerator {
 	name: string
 	schema: ObjectSchema | ArraySchema
 	imports: ImportCollection
-	externalFileImports: string[] = []
+	externalFileImports: ExternalFileImports[] = []
+	filePath: string | undefined
 
 	interface = ''
 
-	constructor(name: string, schema: ObjectSchema | ArraySchema, imports?: ImportCollection) {
+	constructor(
+		name: string,
+		schema: ObjectSchema | ArraySchema,
+		optionals?: { filePath?: string; imports?: ImportCollection },
+	) {
 		this.name = name
 		this.schema = schema
-		this.imports = imports ?? new ImportCollection('')
+		this.imports = optionals?.imports ?? new ImportCollection('')
+		this.filePath = optionals?.filePath
 
 		this.generateInterface()
 	}
@@ -96,7 +103,7 @@ export class InterfaceGenerator {
 
 	createFromRef = (ref: string) => {
 		if (ref[0] !== '#') {
-			this.externalFileImports.push(ref)
+			this.externalFileImports.push({ ref, fileName: this.filePath })
 		}
 		const value = getComponentNameFromRef(ref)
 		this.imports.add(value)

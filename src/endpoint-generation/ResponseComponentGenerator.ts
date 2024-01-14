@@ -33,7 +33,7 @@ export class ResponseComponentGenerator {
 	private generateResponse = (key: string, response: ReqResponse): string => {
 		const schema = response.content['application/json'].schema
 
-		const interfaceGen = new InterfaceGenerator(key, schema, this.imports)
+		const interfaceGen = new InterfaceGenerator(key, schema, { imports: this.imports })
 
 		return `${interfaceGen.interface}`
 	}

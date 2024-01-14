@@ -68,8 +68,4 @@ components:
     Event:
       type: array
       items:
-        $ref: 'external.openapi.yaml#/components/schemas/CreateEventData'
-    EventTwo:
-      $ref: 'external.openapi.yaml#/components/schemas/CreateEventDataTwo'
-    Cat:
-      $ref: '../external2.openapi.yaml#/components/schemas/Cat'
+        $ref: '../test/external2.openapi.yaml#/components/schemas/Attribute'

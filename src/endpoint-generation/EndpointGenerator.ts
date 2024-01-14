@@ -65,7 +65,9 @@ export class EndpointGenerator {
 		if (!requestBodySchema) throw new Error('Missing request body')
 		if (!('properties' in requestBodySchema)) throw new Error('Request body without parameters not supported')
 
-		const interfaceGen = new InterfaceGenerator(`RequestBody`, requestBodySchema, this.file.componentImports)
+		const interfaceGen = new InterfaceGenerator(`RequestBody`, requestBodySchema, {
+			imports: this.file.componentImports,
+		})
 
 		const bodyString = interfaceGen.interface
 
