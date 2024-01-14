@@ -1,0 +1,9 @@
+components:
+  schemas:
+    Dog:
+      type: string
+    Cat:
+      type: string
+    Animal:
+      type: object
+      

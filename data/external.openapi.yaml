@@ -23,7 +23,7 @@ components:
         dateTime:
           type: string
         location:
-          type: string
+          $ref: '../external2.openapi.yaml#/components/schemas/Dog'
         description:
           $ref: 'external.openapi.yaml#/components/schemas/Test'
       required:

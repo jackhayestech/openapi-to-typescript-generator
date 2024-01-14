@@ -11,12 +11,17 @@ import {
 } from './common/utilities'
 import { AllOfSchema, ObjectSchema, Ref, Schema, Schemas } from './types/common.types'
 
+export interface ExternalFileImports {
+	ref: string
+	fileName?: string
+}
+
 export class SchemaGenerator {
 	output: string
 	fileLocation: string
 	fileString = ''
 	fileName = 'schemas.types'
-	externalFileImports: string[] = []
+	externalFileImports: ExternalFileImports[] = []
 
 	constructor(output: string, fileLocation: string, schemas?: Schemas) {
 		this.output = output
@@ -35,16 +40,21 @@ export class SchemaGenerator {
 
 		while (i < this.externalFileImports.length) {
 			const e = this.externalFileImports[i]
-			this.generateSchema(getComponentNameFromRef(e), this.getSchemaFromExternalFile(e))
+			console.log(e)
+			this.generateSchema(getComponentNameFromRef(e.ref), this.getSchemaFromExternalFile(e.ref, e.fileName).data)
 			i++
 		}
 		createSchemaFile(`${this.output}/${this.fileName}.ts`, this.fileString)
 	}
 
 	private generateSchema(name: string, schema: Schema) {
+		let externalFileName: string | undefined
+
 		// Import from other file
 		if ('$ref' in schema) {
-			schema = this.getSchemaFromExternalFile(schema.$ref as string)
+			const { data, fileName } = this.getSchemaFromExternalFile(schema.$ref as string)
+			externalFileName = fileName
+			schema = data
 		}
 
 		if ('allOf' in schema) {
@@ -60,7 +70,7 @@ export class SchemaGenerator {
 			case 'object':
 				const interfaceGen = new InterfaceGenerator(name, schema)
 				this.fileString += `export ${interfaceGen.interface}`
-				this.addToExternals(interfaceGen.externalFileImports)
+				this.addToExternals(interfaceGen.externalFileImports, externalFileName)
 				return
 			case 'number':
 			case 'string':
@@ -73,15 +83,15 @@ export class SchemaGenerator {
 			case 'array':
 				const arrayGen = new InterfaceGenerator(name, schema)
 				this.fileString += `export ${arrayGen.interface}`
-				this.addToExternals(arrayGen.externalFileImports)
+				this.addToExternals(arrayGen.externalFileImports, externalFileName)
 				return
 		}
 	}
 
-	addToExternals = (newImports: string[]) => {
+	addToExternals = (newImports: string[], fileName?: string) => {
 		newImports.map((nI) => {
-			if (!this.externalFileImports.includes(nI)) {
-				this.externalFileImports.push(nI)
+			if (!this.externalFileImports.find(({ ref }) => ref === nI)) {
+				this.externalFileImports.push({ ref: nI, fileName })
 			}
 		})
 	}
@@ -129,18 +139,25 @@ export class SchemaGenerator {
 		return schemaString
 	}
 
-	getSchemaFromExternalFile = (ref: string) => {
+	getSchemaFromExternalFile = (ref: string, path?: string) => {
 		const splitString = ref.split('#')
 		const fileName = splitString[0]
-		const componentPath = splitString[1].split('/').filter((s) => s != '')
 
-		const file = fs.readFileSync(`${this.fileLocation}/${fileName}`, 'utf8')
+		let location = this.fileLocation
+
+		// Path was provided and isn't a relative path
+		if (path && path[0] === '.') {
+			location = path
+		}
+
+		const file = fs.readFileSync(`${location}/${fileName}`, 'utf8')
 		let data = parse(file)
 		let current
+		const componentPath = splitString[1].split('/').filter((s) => s != '')
 		for (let i = 0; i < componentPath.length; i++) {
 			current = componentPath[i]
 			data = data[current]
 		}
-		return data
+		return { data, fileName }
 	}
 }
