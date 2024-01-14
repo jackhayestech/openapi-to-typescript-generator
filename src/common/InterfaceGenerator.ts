@@ -116,6 +116,9 @@ export class InterfaceGenerator {
 
 		anyOf.forEach((type, i) => {
 			if ('$ref' in type) {
+				if (type.$ref[0] !== '#') {
+					this.externalFileImports.push({ ref: type.$ref, fileName: this.filePath })
+				}
 				item += getComponentNameFromRef(type.$ref)
 			} else {
 				item += type.type

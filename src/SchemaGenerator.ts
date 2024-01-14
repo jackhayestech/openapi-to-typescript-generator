@@ -136,6 +136,9 @@ export class SchemaGenerator {
 		schemaString += interfaceGen.generateObjectInterface(obj)
 		schemaString += `}${newLine}${newLine}`
 
+		this.addToExternals(interfaceGen.externalFileImports)
+		this.addToExternals([{ ref: ref }])
+
 		return schemaString
 	}
 
