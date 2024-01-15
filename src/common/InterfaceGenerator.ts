@@ -102,13 +102,13 @@ export class InterfaceGenerator {
 	}
 
 	createFromRef = (ref: string) => {
+		const name = getComponentNameFromRef(ref)
 		if (ref[0] !== '#') {
-			this.externalFileImports.push({ ref, fileName: this.filePath })
+			this.externalFileImports.push({ name, ref, fileName: this.filePath })
 		}
-		const value = getComponentNameFromRef(ref)
-		this.imports.add(value)
+		this.imports.add(name)
 
-		return value
+		return name
 	}
 
 	createAnyOf = (anyOf: AnyOf[]) => {
@@ -116,10 +116,11 @@ export class InterfaceGenerator {
 
 		anyOf.forEach((type, i) => {
 			if ('$ref' in type) {
+				const name = getComponentNameFromRef(type.$ref)
 				if (type.$ref[0] !== '#') {
-					this.externalFileImports.push({ ref: type.$ref, fileName: this.filePath })
+					this.externalFileImports.push({ name, ref: type.$ref, fileName: this.filePath })
 				}
-				item += getComponentNameFromRef(type.$ref)
+				item += name
 			} else {
 				item += type.type
 			}

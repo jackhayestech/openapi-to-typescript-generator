@@ -12,6 +12,7 @@ import {
 import { AllOfSchema, ObjectSchema, Ref, Schema, Schemas } from './types/common.types'
 
 export interface ExternalFileImports {
+	name: string
 	ref: string
 	fileName?: string
 }
@@ -41,7 +42,8 @@ export class SchemaGenerator {
 		while (i < this.externalFileImports.length) {
 			const e = this.externalFileImports[i]
 			const { fileName, data } = this.getSchemaFromExternalFile(e.ref, e.fileName)
-			this.generateSchema(getComponentNameFromRef(e.ref), data, fileName)
+			const path = e.fileName ?? fileName
+			this.generateSchema(getComponentNameFromRef(e.ref), data, path)
 			i++
 		}
 		createSchemaFile(`${this.output}/${this.fileName}.ts`, this.fileString)
@@ -58,7 +60,7 @@ export class SchemaGenerator {
 		}
 
 		if ('allOf' in schema) {
-			this.fileString += this.allOfSchemaGenerate(name, schema)
+			this.fileString += this.allOfSchemaGenerate(name, schema, externalFileName)
 			return
 		}
 
@@ -90,20 +92,20 @@ export class SchemaGenerator {
 
 	addToExternals = (newImports: ExternalFileImports[]) => {
 		newImports.map((nI) => {
-			if (!this.externalFileImports.find(({ ref }) => ref === nI.ref)) {
+			if (!this.externalFileImports.find(({ name }) => name === nI.name)) {
 				this.externalFileImports.push(nI)
 			}
 		})
 	}
 
-	allOfSchemaGenerate = (name: string, { allOf }: AllOfSchema): string => {
+	allOfSchemaGenerate = (name: string, { allOf }: AllOfSchema, fileName?: string): string => {
 		if (allOf.some(({ $ref }) => !$ref)) {
 			if (allOf.length !== 2) {
 				throw Error('All of extends type should only have two elements')
 			}
 			const ref = allOf.find(({ $ref }) => $ref !== undefined) as Ref
 			const obj = allOf.find(({ $ref }) => !$ref) as ObjectSchema
-			return this.allOfExtends(name, ref.$ref, obj)
+			return this.allOfExtends(name, ref.$ref, obj, fileName)
 		}
 
 		let schemaString = `export type ${name} = `
@@ -128,16 +130,16 @@ export class SchemaGenerator {
 		return generateExportString(this.fileName)
 	}
 
-	allOfExtends = (name: string, ref: string, obj: ObjectSchema): string => {
+	allOfExtends = (name: string, ref: string, obj: ObjectSchema, fileName?: string): string => {
 		const refName = getComponentNameFromRef(ref)
 		let schemaString = `export interface ${name} extends ${refName} {${newLine}`
 
-		const interfaceGen = new InterfaceGenerator(name, obj)
+		const interfaceGen = new InterfaceGenerator(name, obj, { filePath: fileName })
 		schemaString += interfaceGen.generateObjectInterface(obj)
 		schemaString += `}${newLine}${newLine}`
 
 		this.addToExternals(interfaceGen.externalFileImports)
-		this.addToExternals([{ ref: ref }])
+		this.addToExternals([{ name, ref, fileName }])
 
 		return schemaString
 	}
@@ -155,7 +157,13 @@ export class SchemaGenerator {
 			location = `${location}/${fileName}`
 		}
 
-		const file = fs.readFileSync(location, 'utf8')
+		let file
+		try {
+			file = fs.readFileSync(location, 'utf8')
+		} catch (error) {
+			throw `File not found: ref: ${ref} path: ${path}`
+		}
+
 		let data = parse(file)
 		let current
 		const componentPath = splitString[1].split('/').filter((s) => s != '')
