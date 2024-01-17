@@ -1,6 +1,6 @@
 {
 	"name": "openapi-to-typescript-generator",
-	"version": "1.0.33",
+	"version": "1.0.34",
 	"description": "Converts openapi to typescript",
 	"main": "index.js",
 	"scripts": {

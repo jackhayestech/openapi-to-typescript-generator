@@ -132,6 +132,11 @@ export class SchemaGenerator {
 
 	allOfExtends = (name: string, ref: string, obj: ObjectSchema, fileName?: string): string => {
 		const refName = getComponentNameFromRef(ref)
+
+		if (ref[0] !== '#') {
+			this.addToExternals([{ name: refName, ref, fileName }])
+		}
+
 		let schemaString = `export interface ${name} extends ${refName} {${newLine}`
 
 		const interfaceGen = new InterfaceGenerator(name, obj, { filePath: fileName })
@@ -139,7 +144,6 @@ export class SchemaGenerator {
 		schemaString += `}${newLine}${newLine}`
 
 		this.addToExternals(interfaceGen.externalFileImports)
-		this.addToExternals([{ name, ref, fileName }])
 
 		return schemaString
 	}
